@@ -1,0 +1,55 @@
+
+make clean-all           delete all object files
+make clean-machine       delete object files for one machine
+make tar                 lmp_src.tar.gz of src dir and packages
+make makelib             update Makefile.lib for library build
+make makelist            update Makefile.list used by old makes
+
+make package             list available packages
+make package-status      status of all packages
+make yes-package         install a single package in src dir
+make no-package          remove a single package from src dir
+make yes-all             install all packages in src dir
+make no-all              remove all packages from src dir
+make yes-standard        install all standard packages
+make no-standard         remove all standard packages
+make yes-user            install all user packages
+make no-user             remove all user packages
+
+make package-update      replace src files with package files
+make package-overwrite   replace package files with src files
+
+make machine             build LAMMPS where machine is one of:
+
+# altix = SGI Altix, Intel icc, MPI, FFTs from SGI SCSL library
+# bgl = LLNL Blue Gene Light machine, xlC, native MPI, FFTW
+# cygwin = Windows Cygwin, mpicxx, MPICH, FFTW
+# encanto = NM cluster with dual quad-core Xeons, mpicxx, native MPI, FFTW
+# fink = Mac OS-X w/ fink libraries, c++, no MPI, FFTW 2.1.5
+# g++ = RedHat Linux box, g++4, gfortran, MPICH2, FFTW
+# g++3 = RedHat Linux box, g++ (v3), Intel ifort, MPICH2, FFTW
+# glory = Linux cluster with 4-way quad cores, Intel mpicxx, native MPI, FFTW
+# lam = FreeBSD box, mpic++, Intel ifort, LAM/MPI, FFTW
+# linux = RedHat Linux box, Intel icc, Intel ifort, MPICH2, FFTW
+# mac = Apple PowerBook G4 laptop, c++, Intel ifort, no MPI, FFTW 2.1.5
+# mac_mpi = Apple PowerBook G4 laptop, mpic++, gfortran, fink LAM/MPI, fink FFTW 2.1.5
+# mkl = Intel Cluster Tools, mpiicc, MKL MPI, MKL FFT
+# odin = 1400 cluster, g++, MPICH, no FFTs
+# openmpi = Fedora Core 6, mpic++, OpenMPI-1.1, FFTW2
+# pgi = Portland Group compiler, pgCC, MPICH, FFTW
+# power5 = IBM Power5+, mpCC_r, native MPI, FFTW
+# qed = CSRI cluster, mpiCC, MPICH, no FFTs
+# sdsc = SDSC BG/L machine, xlC, native MPI, FFTW
+# seaborg = NERSC IBM machine, mpCC, native MPI, FFTW
+# serial = RedHat Linux box, g++4, gfortran, no MPI, no FFTs
+# serial_debug = RedHat Linux box, g++4, gfortran,  no MPI, no FFTs
+# sgi = SGI Origin 350 64-bit, SGI MIPSpro CC, SGI MPI, SGI SCSL MP FFTs
+# solaris = Sun box, c++, no MPI, no FFTs
+# spirit = HP cluster 64-bit, mpicxx, native MPI, FFTW
+# storm = Cray Red Storm XT3, Cray CC, native MPI, FFTW
+# tacc = UT Lonestar TACC machine, mpiCC, MPI, FFTW
+# tbird = Dell cluster with Xeons, Intel mpicxx, native MPI, FFTW
+# tbird = Dell cluster with dual 3.6 GHz Xeons, Intel mpicxx, native MPI, FFTW
+# tesla = 16-proc SGI Onyx3, g++, no MPI, SGI FFTs
+# xt3 = PSC BigBen Cray XT3, CC, native MPI, FFTW
+

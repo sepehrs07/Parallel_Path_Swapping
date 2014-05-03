@@ -1,0 +1,340 @@
+/* ----------------------------------------------------------------------
+   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+   http://lammps.sandia.gov, Sandia National Laboratories
+   Steve Plimpton, sjplimp@sandia.gov
+
+   Copyright (2003) Sandia Corporation.  Under the terms of Contract
+   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+   certain rights in this software.  This software is distributed under 
+   the GNU General Public License.
+
+   See the README file in the top-level LAMMPS directory.
+------------------------------------------------------------------------- */
+
+#include "stdio.h"
+#include "string.h"
+#include "fix_nve.h"
+#include "atom.h"
+#include "force.h"
+#include "update.h"
+#include "respa.h"
+#include "error.h"
+#include "iostream.h"
+#include "fstream.h"
+#include "math.h"
+#include "random_mars.h"
+#include "iomanip.h"
+#include "universe.h"
+
+using namespace LAMMPS_NS;
+
+/* ---------------------------------------------------------------------- */
+
+FixNVE::FixNVE(LAMMPS *lmp, int narg, char **arg) :
+  Fix(lmp, narg, arg)
+{
+  if (strcmp(style,"nve/sphere") != 0 && narg < 3)
+    error->all("Illegal fix nve command");
+
+  time_integrate = 1;
+}
+
+/* ---------------------------------------------------------------------- */
+
+int FixNVE::setmask()
+{
+  int mask = 0;
+  mask |= INITIAL_INTEGRATE;
+  mask |= FINAL_INTEGRATE;
+  mask |= INITIAL_INTEGRATE_RESPA;
+  mask |= FINAL_INTEGRATE_RESPA;
+  return mask;
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::init()
+{
+  dtv = update->dt;
+  dtf = 0.5 * update->dt * force->ftm2v;
+
+  if (strcmp(update->integrate_style,"respa") == 0)
+    step_respa = ((Respa *) update->integrate)->step;
+}
+
+ /* FTS variables */
+ static double xlo, xhi, ylo, yhi, zlo, zhi;
+ static double BL[3], orig_com[3], com[3];
+ 
+ static double     add_force[500000];
+ static double     atom_mass[500000];
+ static double     sample_mass;
+ static double     orig_top_x;
+ 
+ static double     old_x[500000][3];
+ static double    orig_x[500000][3];
+ static double      uw_x[500000][3];
+
+ static int         dump_img=10000;
+ static int pmf_call_counter=0;
+ static int     stress_point=66800;
+ static int        nucl_mark=0;
+ static int       time_point=10000;
+
+/* ----------------------------------------------------------------------
+   allow for both per-type and per-atom mass
+------------------------------------------------------------------------- */
+
+void FixNVE::initial_integrate(int vflag)
+{
+  double dtfm;
+  double trash, temp, top_x, delta_t;
+
+  double **x = atom->x;
+  double **v = atom->v;
+  double **f = atom->f;
+  double *mass = atom->mass;
+  double *rmass = atom->rmass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+    if(pmf_call_counter==0){
+      ifstream vector("pos.read");
+      vector>>xlo>>xhi;
+      vector>>ylo>>yhi;
+      vector>>zlo>>zhi;
+      vector>>sample_mass;
+      for(int i=0; i<nlocal; i++)  vector>>trash>>atom_mass[i]>>add_force[i];      // for adding force
+      vector.close();
+      BL[0] = xhi-xlo;
+      BL[1] = yhi-ylo;
+      BL[2] = zhi-zlo;
+
+//      for (int j=0; j<nlocal; j++)     add_force[j] *= 0.00005;
+
+      /* assign images to nodes */
+      ifstream indata ("R0.data");
+      indata>>trash>>orig_com[0]>>orig_com[1]>>orig_com[2];
+      for(int i=0;i<nlocal;i++)   indata>>trash>>uw_x[i][0]>>uw_x[i][1]>>uw_x[i][2];
+      indata.close();
+      for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++) {  old_x[i][k] = orig_x[i][k] = x[i][k];  }
+        
+    }
+
+
+  /*------------------------------------------------------- For all steps ----------------------------------------------------------*/
+    if(pmf_call_counter>0){
+
+    // adding shear force
+//    if ((pmf_call_counter+1)<stress_point) {
+//      for (int i = 0; i<nlocal; i++)    f[i][0] += add_force[i]*static_cast<double>(pmf_call_counter+1);
+//    }else{
+//      for (int i = 0; i<nlocal; i++)    f[i][0] += add_force[i]*static_cast<double>(stress_point);
+//    }
+
+//    if ((pmf_call_counter+1)<time_point) {
+//      delta_t = 0.00001*static_cast<double>(pmf_call_counter+1);
+//    }else{
+//      delta_t = 0.1;
+//    }
+
+    if(pmf_call_counter==1) {
+      // periodicity in x
+      for (int i=0;i<nlocal;i++) {
+        temp=x[i][0]-orig_x[i][0];
+        if (temp>BL[0]*0.8)  { temp -= BL[0];
+        } else if(-temp>BL[0]*0.8) { temp += BL[0]; }
+        x[i][0] = temp + orig_x[i][0];
+      }
+      // periodicity in z
+      for (int i=0;i<nlocal;i++) {
+        temp=x[i][2]-orig_x[i][2];
+        if (temp>BL[2]*0.8)  { temp -= BL[2];
+        } else if(-temp>BL[2]*0.8) { temp += BL[2]; }
+        x[i][2] = temp + orig_x[i][2];
+      }
+      for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++) orig_x[i][k] = x[i][k];
+      for(int k=0;k<3;k++) {
+        orig_com[k]=0.0;
+        for(int i=0;i<nlocal;i++)    orig_com[k] += orig_x[i][k]*atom_mass[i];
+        orig_com[k] /= sample_mass;
+      }
+    }
+
+
+    /* change from updated x to unwrapped coordinates (to match inital state) */
+    // periodicity in x
+    for (int i=0;i<nlocal;i++) {
+      temp=x[i][0]-orig_x[i][0];
+      if (temp>BL[0]*0.8)  { temp -= BL[0];
+      } else if(-temp>BL[0]*0.8) { temp += BL[0]; }
+      uw_x[i][0] = temp + orig_x[i][0];
+    }
+    // periodicity in z
+    for (int i=0;i<nlocal;i++) {
+      temp=x[i][2]-orig_x[i][2];
+      if (temp>BL[2]*0.8)  { temp -= BL[2];
+      } else if(-temp>BL[2]*0.8) { temp += BL[2]; }
+      uw_x[i][2] = temp + orig_x[i][2];
+    }
+    // free in y
+    for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
+
+
+    for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
+
+
+      // MD sampling
+      if (rmass) {
+        for (int i=0; i<nlocal; i++) {
+          if (mask[i] & groupbit) {
+            dtfm = dtf / rmass[i];
+            v[i][0] += dtfm * f[i][0];
+            v[i][1] += dtfm * f[i][1];
+            v[i][2] += dtfm * f[i][2];
+            uw_x[i][0] += dtv*v[i][0];
+            uw_x[i][1] += dtv*v[i][1];
+            uw_x[i][2] += dtv*v[i][2];
+          }
+        }
+      } else {
+        for (int i=0; i<nlocal; i++) {
+          if (mask[i] & groupbit) {
+            dtfm = dtf / mass[type[i]];
+            v[i][0] += dtfm * f[i][0];
+            v[i][1] += dtfm * f[i][1];
+            v[i][2] += dtfm * f[i][2];
+            uw_x[i][0] += dtv*v[i][0];
+            uw_x[i][1] += dtv*v[i][1];
+            uw_x[i][2] += dtv*v[i][2];
+          }
+        }
+      }
+
+//    for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++) { v[i][k] *= 0.99; }
+//    for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++) { v[i][k] = 0.0; uw_x[i][k] += 0.1*f[i][k]; }
+
+
+    /* COM correction */
+    for(int k=0;k<3;k++) {
+      com[k]=0.0;
+      for(int i=0;i<nlocal;i++)    com[k] += uw_x[i][k]*atom_mass[i];
+      com[k] /= sample_mass;
+    }
+    for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   uw_x[i][k]-=(com[k]-orig_com[k]);
+
+    top_x=0.0;
+    for(int i=0;i<nlocal;i++) if (orig_x[i][1]>20.715)   top_x += uw_x[i][0];
+
+    if (pmf_call_counter==1)  orig_top_x = top_x;
+
+    if (nucl_mark==0 && fabs(top_x-orig_top_x)>500.0) {
+//      ofstream outdata1 ("step.output");
+//      outdata1<<"stress point: "<<stress_point<<endl;
+//      outdata1<<"nucleation point: "<<pmf_call_counter+1<<endl;
+//      outdata1<<"waiting: "<<pmf_call_counter+1-stress_point<<endl;
+//      outdata1.close();
+      cout<<"nucleation: "<<pmf_call_counter+1<<endl;
+      nucl_mark=1;
+    }
+
+#if 0
+    /* print images */
+    if((pmf_call_counter+1)%dump_img==0){
+        char buf[256];
+        sprintf(buf,"dump.300K.%d",pmf_call_counter+1);
+        ofstream outdata (buf);
+        outdata<<"ITEM: TIMESTEP"<<endl;
+        outdata<<pmf_call_counter+1<<endl;
+        outdata<<"ITEM: NUMBER OF ATOMS"<<endl;
+        outdata<<nlocal<<endl;
+        outdata<<"ITEM: BOX BOUNDS x y z"<<endl;
+        outdata<<setprecision(9)<<xlo<<" "<<xhi<<endl;
+        outdata<<setprecision(9)<<ylo<<" "<<yhi<<endl;
+        outdata<<setprecision(9)<<zlo<<" "<<zhi<<endl;
+        outdata<<"ITEM: ATOMS id type x y z"<<endl;
+        for(int i=0;i<nlocal;i++)  outdata<<setprecision(12)<<i+1<<" "<<type[i]<<" "<<uw_x[i][0]<<" "<<uw_x[i][1]<<" "<<uw_x[i][2]<<endl;
+        outdata.close();
+    }
+#endif
+
+  }
+
+    // return MD to LAMMPS
+    for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
+
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::final_integrate()
+{
+  double dtfm;
+
+  double **v = atom->v;
+  double **f = atom->f;
+  double *mass = atom->mass;
+  double *rmass = atom->rmass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+  if (rmass) {
+    for (int i = 0; i < nlocal; i++) {
+      if (mask[i] & groupbit) {
+	dtfm = dtf / rmass[i];
+	v[i][0] += dtfm * f[i][0];
+	v[i][1] += dtfm * f[i][1];
+	v[i][2] += dtfm * f[i][2];
+      }
+    }
+
+  } else {
+    for (int i = 0; i < nlocal; i++) {
+      if (mask[i] & groupbit) {
+	dtfm = dtf / mass[type[i]];
+	v[i][0] += dtfm * f[i][0];
+	v[i][1] += dtfm * f[i][1];
+	v[i][2] += dtfm * f[i][2];
+      }
+    }
+  }
+
+  pmf_call_counter += 1;
+
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::initial_integrate_respa(int vflag, int ilevel, int flag)
+{
+  if (flag) return;             // only used by NPT,NPH
+
+  dtv = step_respa[ilevel];
+  dtf = 0.5 * step_respa[ilevel] * force->ftm2v;
+
+  // innermost level - NVE update of v and x
+  // all other levels - NVE update of v
+
+  if (ilevel == 0) initial_integrate(vflag);
+  else final_integrate();
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::final_integrate_respa(int ilevel)
+{
+  dtf = 0.5 * step_respa[ilevel] * force->ftm2v;
+  final_integrate();
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::reset_dt()
+{
+  dtv = update->dt;
+  dtf = 0.5 * update->dt * force->ftm2v;
+}

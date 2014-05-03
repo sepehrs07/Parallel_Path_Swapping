@@ -1,0 +1,689 @@
+/* ----------------------------------------------------------------------
+   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+   http://lammps.sandia.gov, Sandia National Laboratories
+   Steve Plimpton, sjplimp@sandia.gov
+
+   Copyright (2003) Sandia Corporation.  Under the terms of Contract
+   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+   certain rights in this software.  This software is distributed under 
+   the GNU General Public License.
+
+   See the README file in the top-level LAMMPS directory.
+------------------------------------------------------------------------- */
+
+#include "stdio.h"
+#include "string.h"
+#include "fix_nve.h"
+#include "atom.h"
+#include "force.h"
+#include "update.h"
+#include "respa.h"
+#include "error.h"
+#include "iostream.h"
+#include "fstream.h"
+#include "math.h"
+#include "random_mars.h"
+#include "iomanip.h"
+#include "universe.h"
+
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
+
+using namespace LAMMPS_NS;
+
+/* ---------------------------------------------------------------------- */
+
+FixNVE::FixNVE(LAMMPS *lmp, int narg, char **arg) :
+  Fix(lmp, narg, arg)
+{
+  if (strcmp(style,"nve/sphere") != 0 && narg < 3)
+    error->all("Illegal fix nve command");
+
+  time_integrate = 1;
+}
+
+/* ---------------------------------------------------------------------- */
+
+int FixNVE::setmask()
+{
+  int mask = 0;
+  mask |= INITIAL_INTEGRATE;
+  mask |= FINAL_INTEGRATE;
+  mask |= INITIAL_INTEGRATE_RESPA;
+  mask |= FINAL_INTEGRATE_RESPA;
+  return mask;
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::init()
+{
+  dtv = update->dt;
+  dtf = 0.5 * update->dt * force->ftm2v;
+
+  if (strcmp(update->integrate_style,"respa") == 0)
+    step_respa = ((Respa *) update->integrate)->step;
+}
+
+/* ---------------------------------------------------------------------- */
+
+
+ /* TIS global variables */
+ static int    g_step=0;
+ static int    success_counter=0;
+ static int    Tattempt_counter=-1; 
+ static double xlo, xhi, ylo, yhi, zlo, zhi;
+ static double BL[3], orig_com[3];
+
+ static double       center_x[20000*3][30];
+
+ static double      orig_x[20000][3];
+ static double        uw_x[20000][3];
+ static double       old_x[20000][3];
+ static double         X_0[20000][3];
+ static double         V_0[20000][3];
+ static double    temp_X_0[20000][3];
+ static double    temp_V_0[20000][3];
+ static double   add_force[20000];
+ static double   atom_mass[20000];
+
+ static double       st3_x[20000][3];
+ static double       st3_v[20000][3];
+ static double       old_v[20000][3];
+ static double     trial_v[20000][3];
+
+// static double   Al_mass = 26.982; //made same as potential file (dw)
+ static double   H, PE_0, velo_magn, N_max, ke_added, cum_E, sample_mass;
+ static int      tao_b, tao_f, step_bck, step_fwd, oldm, picked_m;
+ static int      success_index, crossed_interface, previous_success, unique_trajectories;
+// static int      cell_pick, cell_s2p=3;
+
+ static int      b_index=0;
+ static int      f_index=0;
+ static int      XV0_rec=0;
+ static int      vst3_rec=0;
+ static int      pick_index=0;
+ static int      step6_index=0;
+ static int      st3_pass=0;
+ static int      trajectory_finished=1;
+ static int      time_L_old = 10000;
+ static int      rsteps=100;
+
+ static int      NN; // = 11;                  //number of cells from cell #0 to cell #NN-1
+// static int      cell_ground = 2;
+ static int      cell_start;
+ static int      lamda;          // last cell # (from 0 to NN-1) (trajectory stops when it touches this cell)
+
+/* ----------------------------------------------------------------------
+   allow for both per-type and per-atom mass
+------------------------------------------------------------------------- */
+
+void FixNVE::initial_integrate(int vflag)
+{
+
+  /* TIS variables */
+  double   old_ke, new_ke, ave_E;
+  double   rand_U, rand_U1, rand_U2, rand_G, prob, temp, trash, vor_check;
+  double   vor_dist[NN];
+  int      rescale, pnum;
+  /*---------------*/
+
+  double dtfm;
+
+  double **x = atom->x;
+  double **v = atom->v;
+  double **f = atom->f;
+  double *mass = atom->mass;
+  double *rmass = atom->rmass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+  MPI_Status status;
+  int me;
+  MPI_Comm_rank(universe->uworld, &me);
+
+  /* Initialization for first call to fix_nve */
+    if(g_step==0) {
+
+      /* read if constraint is on/off and box sizes */
+      ifstream vector("pos.read");
+      vector>>xlo>>xhi;
+      vector>>ylo>>yhi;
+      vector>>zlo>>zhi;
+//      vector>>lamda;
+      vector>>sample_mass;
+      for(int i=0;i<nlocal;i++)  vector>>trash>>atom_mass[i]>>add_force[i];      // for adding force
+      vector.close();
+      BL[0] = xhi-xlo;
+      BL[1] = yhi-ylo;
+      BL[2] = zhi-zlo;
+
+      /* read interface position */
+      ifstream inld("ld_run.in");
+      inld>>lamda;
+      inld.close();
+
+//      char buf1[128];
+//      sprintf(buf1,"cp ld%d.in ld_run.in",lamda+1);
+//      system (buf1);
+
+      NN = lamda+2+3;
+      cell_start = lamda+1;
+
+      /* read PE at beginning and Interface*/
+//      char buf0[128];
+//      sprintf(buf0,"PE.log");
+//      ifstream indata0 (buf0);
+//      for(int i=0;i<cell_start;i++)  indata0>>PE_0;
+//      indata0.close();
+//      cout<<"from interface #"<<lamda<<"  to #"<<lamda+1<<endl;
+
+      // read starting configuration 
+      char bufdt[128];
+      sprintf(bufdt,"R%d.data",cell_start);
+      ifstream indata1 (bufdt);              // unwrapped
+      indata1>>trash>>orig_com[0]>>orig_com[1]>>orig_com[2];
+      for(int i=0;i<nlocal;i++)   indata1>>trash>>orig_x[i][0]>>orig_x[i][1]>>orig_x[i][2];
+      indata1.close();
+
+      /* read cell center configurations */
+      for(int j=0;j<NN;j++) {
+        char buf[128];
+        sprintf(buf,"R%d.data",j);
+        ifstream indata (buf);
+        indata>>trash>>trash>>trash>>trash;
+        for(int i=0;i<nlocal;i++)   indata>>trash>>center_x[3*i+0][j]>>center_x[3*i+1][j]>>center_x[3*i+2][j];
+        indata.close();
+      }
+
+      //initiallize X_0 and V_0 (dw)
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)  { X_0[i][k] = x[i][k]; V_0[i][k] = v[i][k]; }
+
+
+    }   // end of initialization activities for first call to fix_nve
+
+
+
+    // initialize a new trajectory and record findings from finished trajectory
+    if(trajectory_finished==1) {  // if the last call to fix_nve concluded a sucessful trajectory from 0 to i+1 
+
+      Tattempt_counter++;
+
+      //if last trajectory was in TPE then record some things
+      if (crossed_interface==1 && success_index>0) {   // successful through Step 5
+
+        cout<<" --- recording from cell: "<<picked_m<<endl;
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { X_0[i][k] = temp_X_0[i][k]; V_0[i][k] = temp_V_0[i][k]; }
+
+        if (success_index==2) {
+          success_counter++;
+          //previous_success=1;
+        }//else previous_success=0;
+
+        tao_b = step_bck-rsteps;
+        tao_f = step_fwd-rsteps;
+        time_L_old = tao_b + tao_f;
+
+        // ----- TIS Step 6&7 ------ // redundant
+//        time_L_new = tao_b + tao_f; 
+//        prob = MIN(1.0,static_cast<double>(time_L_old)/static_cast<double>(time_L_new)); 
+//        rand_U = (double)rand()/(double)RAND_MAX;
+//        if (rand_U<prob) {
+//          for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { X_0[i][k] = temp_X_0[i][k]; V_0[i][k] = temp_V_0[i][k]; }
+//          time_L_old = time_L_new;
+//        }
+
+        unique_trajectories++;
+        cout<<endl<<" added trajectory to TPE unique trajectories = "<<unique_trajectories<<endl; 
+        cout<<" successful trajectories "<<success_counter<<endl;
+        cout<<" trajectories in ensemble "<<Tattempt_counter<<endl;
+        cout<<" number of steps in last trajectory "<<time_L_old<<endl<<endl;
+
+      }//else if(previous_success==1)  { success_counter++; }
+        
+      
+      //reset flags for new trajectory
+      b_index = 0;
+      f_index = 0;
+      XV0_rec = 0;
+      trajectory_finished = 0;
+      crossed_interface = 0;
+      success_index = 0;
+//pick_index = 0;
+
+      // select cell from which to record starting configuration for the trajectory after this one
+//      pnum = 0;
+//      do { pnum = (int)rand()%3 - 1; } while (pnum==0);
+//      cell_pick = cell_s2p + pnum;
+//      if(cell_pick<=2) cell_pick=3;
+//      if(cell_pick>=Interface) cell_pick=Interface-1;
+//      cell_s2p = cell_pick;
+
+      // set maximum number of steps for this trajectory 
+      double alpha = (double)rand()/(double)RAND_MAX;
+      N_max = floor(static_cast<double>(time_L_old)/alpha);
+
+      // ----- TIS Step 1 ------ //
+      //assign x and v to start new trajectory from
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)  { x[i][k] = X_0[i][k]; v[i][k] = V_0[i][k]; }
+
+    }    // ------- end of initialization of new trajectory
+
+
+
+    // XV_0 recording (save positions and velocitites from current trajectory)
+    if (XV0_rec==-1) { //from a backward trajectory
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { temp_X_0[i][k] =  x[i][k]; temp_V_0[i][k] = -v[i][k]; }
+      XV0_rec = 0;
+      picked_m = oldm;
+      //cout<<" recording from backward with cell: "<<oldm<<endl;
+    }
+    if (XV0_rec==1) { // from a forward trajectory
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { temp_X_0[i][k] =  x[i][k]; temp_V_0[i][k] = v[i][k];  }
+      XV0_rec = 0;
+      picked_m = oldm;
+      //cout<<" recording from forward with cell: "<<oldm<<endl;
+    }
+
+
+
+    // ------- everything in this if statement can be moved into the bottom of the trajectory finished loop
+    if (b_index==0 && f_index==0) {
+
+
+    // ----- TIS Step 2  ------ //
+    //alter momentum
+
+      //measure current ke
+      old_ke=0.0;
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { old_ke += v[i][k]*v[i][k]*atom_mass[i]; }
+      old_ke*= 0.5*1.0364269e-4; // precesion the same as lammps (dw)
+
+      //measure average velocity mag per atom
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)  temp += fabs(v[i][k]);
+      velo_magn = temp / static_cast<double>(3*nlocal);
+
+      // record initial H for old time's sake
+      if (g_step==0)   H = PE_0 + old_ke;
+
+      // alternate between NVE and NVT
+      if(st3_pass%2==1){   //hack NVE
+        rescale=1;  //--- NVE
+      }else{
+        rescale=0;  //--- NVT
+      }
+     
+      // add momentum pertabation
+      srand(time(NULL));
+      for(int i=0;i<nlocal;i++) {
+        for(int k=0;k<3;k++) {
+          old_v[i][k] = v[i][k];
+          rand_U1 = (double)rand()/(double)RAND_MAX;
+          rand_U2 = (double)rand()/(double)RAND_MAX;
+          if (rand_U1>1e-30)   rand_G=sqrt(-2*log(rand_U1))*cos(2*3.14159*rand_U2);
+          else  rand_G=0.0;
+          trial_v[i][k] = v[i][k] + 0*0.05*2.0*velo_magn*rand_G;
+          if(rescale) trial_v[i][k] = v[i][k] + 0.15*2.0*velo_magn*rand_G;
+        }
+      }
+
+      // measure KE with momentum perturbation
+      new_ke=0.0;
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { new_ke += trial_v[i][k]*trial_v[i][k]*atom_mass[i]; }
+      new_ke*=0.5*1.0364269e-4; //make precesion the same as lammps (dw)
+      ke_added = new_ke - old_ke;
+//cout<<"ke_added "<<ke_added<<endl;
+
+
+    // ----- TIS Step 3  ------ //
+    // decide whether to accept perturbation 
+      prob = MIN(1.0,exp(-ke_added*38.6847));
+      rand_U = (double)rand()/(double)RAND_MAX;
+
+      //if NVE rescale energy and accept perturbation
+      if(rescale){
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   trial_v[i][k]*=sqrt(old_ke/new_ke);
+        prob=1;
+        ke_added=0;
+      }
+
+      //if NVT decide whether to perform this trajectory
+      if (rand_U<prob) { 
+        //record starting x and v for bkwd and fwd dynamics
+        for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { st3_x[i][k] = x[i][k]; st3_v[i][k] = trial_v[i][k]; } 
+        b_index = 1;
+        crossed_interface=0;
+        st3_pass++;
+      } 
+      else { 
+        trajectory_finished=1; 
+  //      cout<<" trajectory ended due to momentum perturbation in NVT "<<endl;
+      }
+
+      step_bck = 0;
+      step_fwd = 0;
+
+    }
+    // end of steps 2 and 3
+
+
+    // --- Step 4: backward MD
+    if (b_index == 1) {
+
+      //hold trajectory in place to ensure neighbor list can catch up to sudden movement
+      if (step_bck<rsteps) {
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)  { x[i][k] = st3_x[i][k]; v[i][k] = -st3_v[i][k]; }
+      } else {
+
+        //set velocity on first dynamics step
+        if (step_bck==rsteps) {
+          for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   v[i][k] = -st3_v[i][k];
+          //cout<<endl<<"backward starts - g_step:  "<<g_step<<endl;
+        }
+
+        // periodicity in x
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][0]-orig_x[i][0];
+          if (temp>BL[0]*0.8)  { temp -= BL[0]; }
+          else if(-temp>BL[0]*0.8) { temp += BL[0]; }
+          uw_x[i][0] = temp + orig_x[i][0];
+        }
+        // free in y
+        for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
+        // periodicity in z
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][2]-orig_x[i][2];
+          if (temp>BL[2]*0.8)  { temp -= BL[2]; }
+          else if(-temp>BL[2]*0.8) { temp += BL[2]; }
+          uw_x[i][2] = temp + orig_x[i][2];
+        }
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
+
+        if (rmass) {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+  	      dtfm = dtf / rmass[i];
+	      v[i][0] += dtfm * f[i][0];
+	      v[i][1] += dtfm * f[i][1];
+	      v[i][2] += dtfm * f[i][2];
+	      uw_x[i][0] += dtv * v[i][0];
+	      uw_x[i][1] += dtv * v[i][1];
+	      uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        } else {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+	      dtfm = dtf / mass[type[i]];
+	      v[i][0] += dtfm * f[i][0];
+	      v[i][1] += dtfm * f[i][1];
+	      v[i][2] += dtfm * f[i][2];
+	      uw_x[i][0] += dtv * v[i][0];
+	      uw_x[i][1] += dtv * v[i][1];
+	      uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        }
+        for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
+
+        // measure distance between current configuration and cell centers
+        for(int j=0;j<NN;j++) { 
+          vor_dist[j]=0.0;
+          for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { temp = uw_x[i][k] - center_x[3*i+k][j]; vor_dist[j] += temp*temp; }
+          vor_dist[j]=sqrt(vor_dist[j]);
+        }
+
+        // determine which cell the current configuration is in
+        vor_check = vor_dist[0];
+        for(int m=0;m<NN;m++)   vor_check = MIN(vor_check,vor_dist[m]);
+
+/*
+for(int m=0;m<NN;m++)  { 
+  if (fabs(vor_dist[m]-vor_check)<1.0e-10 && m!=oldm){   
+    cout<<m<<" -- back_step:"<<step_bck<<" -- g_step:"<<g_step<<endl; 
+    oldm=m;
+  }
+}
+*/
+
+        // if in ground cell then stop bkwd MD and start fwd MD
+        //if (fabs(vor_dist[0]-vor_check)<1.0e-10 && oldm==1)   {
+        if ( (fabs(vor_dist[0]-vor_check)<1.0e-10 || fabs(vor_dist[1]-vor_check)<1.0e-10 || fabs(vor_dist[2]-vor_check)<1.0e-10 || fabs(vor_dist[3]-vor_check)<1.0e-10) && oldm==4 )   {
+           b_index = 0; f_index = 1;
+//           cout<<"backwards MD suceeded "<<g_step<<" "<<step_bck<<endl;
+        }
+        else if (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 && oldm==lamda+1 && success_counter>0)   {  //assumed first trajectory will be a success
+        //else if ( (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+3]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+4]-vor_check)<1.0e-10) && oldm==lamda+1 && success_counter>0 )   {
+          trajectory_finished=1; 
+//          cout<<"backwards MD failed, back to step 1 "<<g_step<<" "<<step_bck<<endl;
+        }
+
+        // check if sim makes it into next to last cell (meaning it crossed the interface lam_i
+        if (crossed_interface==0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm==lamda+1)   { crossed_interface = 1; }
+        if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; }
+
+        // record the number of the cell containing the current position
+        for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
+
+
+        /* pick XV_0 for next TIS step */
+        //if (fabs(vor_dist[cell_pick]-vor_check)<1.0e-10 && pick_index==0) {
+        //  XV0_rec = -1;
+        //  pick_index = 1;
+        //}
+        prob = 1.0/static_cast<double>(step_bck-rsteps+1);
+        rand_U = (double)rand()/(double)RAND_MAX;
+        if (rand_U<prob)   XV0_rec = -1;
+
+      }
+
+      // check if sim has gone too many steps..if so then stop this trajectory 
+      if (static_cast<double>(step_bck)-rsteps > N_max) { 
+        trajectory_finished=1;
+  //      cout<<"backwards MD failed due to N_max, back to step 3 "<<step_bck-rsteps<<"  N_max="<<N_max<<endl;
+      }
+     
+      step_bck++;
+      
+    }
+
+
+
+    // --- Step 5: forward MD
+    if (f_index == 1) {
+      if (step_fwd<rsteps) {
+        for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)  { x[i][k] = st3_x[i][k]; v[i][k] = st3_v[i][k]; }
+      } else {
+
+        if (step_fwd==rsteps) {
+          for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)  v[i][k] = st3_v[i][k];
+          //cout<<endl<<"forward starts - g_step:  "<<g_step<<endl;
+        }
+
+        // periodicity in x
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][0]-orig_x[i][0];
+          if (temp>BL[0]*0.8)  { temp -= BL[0]; }
+          else if(-temp>BL[0]*0.8) { temp += BL[0]; }
+          uw_x[i][0] = temp + orig_x[i][0];
+        }
+        // free in y
+        for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
+        // periodicity in z
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][2]-orig_x[i][2];
+          if (temp>BL[2]*0.8)  { temp -= BL[2]; }
+          else if(-temp>BL[2]*0.8) { temp += BL[2]; }
+          uw_x[i][2] = temp + orig_x[i][2];
+        }
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
+
+        if (rmass) {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+              dtfm = dtf / rmass[i];
+              v[i][0] += dtfm * f[i][0];
+              v[i][1] += dtfm * f[i][1];
+              v[i][2] += dtfm * f[i][2];
+              uw_x[i][0] += dtv * v[i][0];
+              uw_x[i][1] += dtv * v[i][1];
+              uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        } else {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+              dtfm = dtf / mass[type[i]];
+              v[i][0] += dtfm * f[i][0];
+              v[i][1] += dtfm * f[i][1];
+              v[i][2] += dtfm * f[i][2];
+              uw_x[i][0] += dtv * v[i][0];
+              uw_x[i][1] += dtv * v[i][1];
+              uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        }
+        for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
+     
+
+        //measure distance to cell centers from current configuration 
+        for(int j=0;j<NN;j++) {
+          vor_dist[j]=0.0;
+          for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { temp = uw_x[i][k] - center_x[3*i+k][j]; vor_dist[j] += temp*temp; }
+          vor_dist[j]=sqrt(vor_dist[j]);
+        }
+
+        //determine which cell the configuration is in
+        vor_check = vor_dist[0];
+        for(int m=0;m<NN;m++)   vor_check = MIN(vor_check,vor_dist[m]);
+
+/*
+for(int m=0;m<NN;m++)  { 
+  if (fabs(vor_dist[m]-vor_check)<1.0e-10 && m!=oldm){   
+    cout<<m<<" -- fwd_step:"<<step_bck<<" -- g_step:"<<g_step<<endl; 
+    oldm=m;
+  }
+}
+*/
+
+        // dww added step6_index=1 in else if
+        if (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 && oldm==lamda+1)   {
+        //if ( (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+3]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+4]-vor_check)<1.0e-10) && oldm==lamda+1 )   {
+          trajectory_finished=1; 
+          success_index = 2; 
+//          cout<<"forward MD made it to lam_i+1 "<<g_step<<" "<<step_fwd<<endl;
+        //} else if(fabs(vor_dist[0]-vor_check)<1.0e-10 && oldm==1)   {
+        } else if( (fabs(vor_dist[0]-vor_check)<1.0e-10 || fabs(vor_dist[1]-vor_check)<1.0e-10 || fabs(vor_dist[2]-vor_check)<1.0e-10  || fabs(vor_dist[3]-vor_check)<1.0e-10) && oldm==4 )   {
+          trajectory_finished=1;
+          success_index = 1;
+//          cout<<"forward MD made it to lam_0  "<<g_step<<" "<<step_fwd<<endl;
+        }
+
+        // dww check if sim makes it into next to last cell (meaning it crossed the interface lam_i
+        if (crossed_interface==0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm==lamda+1)   { crossed_interface = 1; }
+        if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; }
+
+        // record the number of the cell containing the current position
+        for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
+
+        /* pick XV_0 for next TIS step */
+        //if (fabs(vor_dist[cell_pick]-vor_check)<1.0e-10 && pick_index==0) {
+        //  XV0_rec = 1;
+        //  pick_index = 1;
+        //}
+        prob = 1.0/static_cast<double>(step_fwd+step_bck-2*rsteps+2);
+        rand_U = (double)rand()/(double)RAND_MAX;
+        if (rand_U<prob)   XV0_rec = 1;
+
+      }
+
+      //added the pick_index (dw)
+      if (static_cast<double>(step_bck+step_fwd-2*rsteps) > N_max) {
+        trajectory_finished=1; 
+//        cout<<"forward MD failed due to N_max, back to step 1 "<<step_bck+step_fwd-2*rsteps<<" N_max="<<N_max<<endl;
+      }
+
+      step_fwd++;
+
+    }
+    // end of fwd MD
+
+
+
+
+} //------ final end
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::final_integrate()
+{
+  double dtfm;
+
+  double **v = atom->v;
+  double **f = atom->f;
+  double *mass = atom->mass;
+  double *rmass = atom->rmass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+  if (rmass) {
+    for (int i = 0; i < nlocal; i++) {
+      if (mask[i] & groupbit) {
+	dtfm = dtf / rmass[i];
+	v[i][0] += dtfm * f[i][0];
+	v[i][1] += dtfm * f[i][1];
+	v[i][2] += dtfm * f[i][2];
+      }
+    }
+
+  } else {
+    for (int i = 0; i < nlocal; i++) {
+      if (mask[i] & groupbit) {
+	dtfm = dtf / mass[type[i]];
+	v[i][0] += dtfm * f[i][0];
+	v[i][1] += dtfm * f[i][1];
+	v[i][2] += dtfm * f[i][2];
+      }
+    }
+  }
+
+  g_step++;
+
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::initial_integrate_respa(int vflag, int ilevel, int flag)
+{
+  if (flag) return;             // only used by NPT,NPH
+
+  dtv = step_respa[ilevel];
+  dtf = 0.5 * step_respa[ilevel] * force->ftm2v;
+
+  // innermost level - NVE update of v and x
+  // all other levels - NVE update of v
+
+  if (ilevel == 0) initial_integrate(vflag);
+  else final_integrate();
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::final_integrate_respa(int ilevel)
+{
+  dtf = 0.5 * step_respa[ilevel] * force->ftm2v;
+  final_integrate();
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::reset_dt()
+{
+  dtv = update->dt;
+  dtf = 0.5 * update->dt * force->ftm2v;
+}

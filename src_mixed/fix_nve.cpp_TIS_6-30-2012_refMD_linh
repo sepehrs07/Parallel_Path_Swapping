@@ -1,0 +1,313 @@
+/* ----------------------------------------------------------------------
+   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+   http://lammps.sandia.gov, Sandia National Laboratories
+   Steve Plimpton, sjplimp@sandia.gov
+
+   Copyright (2003) Sandia Corporation.  Under the terms of Contract
+   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+   certain rights in this software.  This software is distributed under 
+   the GNU General Public License.
+
+   See the README file in the top-level LAMMPS directory.
+------------------------------------------------------------------------- */
+
+#include "stdio.h"
+#include "string.h"
+#include "fix_nve.h"
+#include "atom.h"
+#include "force.h"
+#include "update.h"
+#include "respa.h"
+#include "error.h"
+#include "iostream.h"
+#include "fstream.h"
+#include "math.h"
+#include "random_mars.h"
+#include "iomanip.h"
+#include "universe.h"
+
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
+
+using namespace LAMMPS_NS;
+
+/* ---------------------------------------------------------------------- */
+
+FixNVE::FixNVE(LAMMPS *lmp, int narg, char **arg) :
+  Fix(lmp, narg, arg)
+{
+  if (strcmp(style,"nve/sphere") != 0 && narg < 3)
+    error->all("Illegal fix nve command");
+
+  time_integrate = 1;
+}
+
+/* ---------------------------------------------------------------------- */
+
+int FixNVE::setmask()
+{
+  int mask = 0;
+  mask |= INITIAL_INTEGRATE;
+  mask |= FINAL_INTEGRATE;
+  mask |= INITIAL_INTEGRATE_RESPA;
+  mask |= FINAL_INTEGRATE_RESPA;
+  return mask;
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::init()
+{
+  dtv = update->dt;
+  dtf = 0.5 * update->dt * force->ftm2v;
+
+  if (strcmp(update->integrate_style,"respa") == 0)
+    step_respa = ((Respa *) update->integrate)->step;
+}
+
+/* ---------------------------------------------------------------------- */
+
+
+ /* TIS global variables */
+ static int    g_step=0;
+ static int    success_counter=0;
+ static double xlo, xhi, ylo, yhi, zlo, zhi;
+ static double BL[3], orig_com[3], prism[3];
+
+ static double    center_x[20000*3][30];
+ static double      orig_x[20000][3];
+ static double        uw_x[20000][3];
+ static double       old_x[20000][3];
+
+ static int      react_mark=0;
+ static int      NN=5;
+
+
+/* ----------------------------------------------------------------------
+   allow for both per-type and per-atom mass
+------------------------------------------------------------------------- */
+
+void FixNVE::initial_integrate(int vflag)
+{
+
+
+  /* TIS variables */
+
+  double  old_ke, new_ke, ave_E;
+  double  rand_U, rand_U1, rand_U2, rand_G, prob, temp, trash, vor_check;
+  double  vor_dist[NN];
+  int     rescale, pnum, tao_b, tao_f;
+  static int oldm;
+
+  /*---------------*/
+
+
+  double dtfm;
+
+  double **x = atom->x;
+  double **v = atom->v;
+  double **f = atom->f;
+  double *mass = atom->mass;
+  double *rmass = atom->rmass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+  MPI_Status status;
+  int me;
+  MPI_Comm_rank(universe->uworld, &me);
+
+  /* First step: information input */
+    if(g_step==0) {
+  
+      /* read if constraint is on/off and box sizes */
+      ifstream vector("pos.read");
+      vector>>xlo>>xhi;
+      vector>>ylo>>yhi;
+      vector>>zlo>>zhi;
+      //vector>>lamda;
+      //vector>>sample_mass;
+      //for(int i=0;i<nlocal;i++)  vector>>trash>>atom_mass[i]>>add_force[i];      // for adding force
+      vector.close();
+      BL[0] = xhi-xlo;
+      BL[1] = yhi-ylo;
+      BL[2] = zhi-zlo;
+
+      /* read PE at beginning and Interface*/
+//      char buf0[128];
+//      sprintf(buf0,"PE.log");
+//      ifstream indata0 (buf0); 
+//      indata0>>PE_0;
+//      indata0.close();
+      //cout<<"from interface #"<<lamda<<"  to #"<<lamda+1<<endl;
+
+      /* import path data */
+      for(int j=0;j<NN;j++) {
+        char buf[128];
+        sprintf(buf,"R%d.data",j);
+        ifstream indata (buf);
+        indata>>trash>>trash>>trash>>trash;
+        for(int i=0;i<nlocal;i++)   indata>>trash>>center_x[3*i+0][j]>>center_x[3*i+1][j]>>center_x[3*i+2][j];
+        indata.close();
+      }
+
+      // --- Step 1: 
+      ifstream indata1 ("R0.data");   // unwrapped
+      indata1>>trash>>orig_com[0]>>orig_com[1]>>orig_com[2];
+      for(int i=0;i<nlocal;i++)   indata1>>trash>>orig_x[i][0]>>orig_x[i][1]>>orig_x[i][2];
+      indata1.close();
+
+    } 
+
+
+        // periodicity in x
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][0]-orig_x[i][0];
+          if (temp>BL[0]*0.8)  { temp -= BL[0]; }
+          else if(-temp>BL[0]*0.8) { temp += BL[0]; }
+          uw_x[i][0] = temp + orig_x[i][0];
+        }
+        // free in y
+        for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
+        // periodicity in z
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][2]-orig_x[i][2];
+          if (temp>BL[2]*0.8)  { temp -= BL[2]; }
+          else if(-temp>BL[2]*0.8) { temp += BL[2]; }
+          uw_x[i][2] = temp + orig_x[i][2];
+        }
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
+
+        if (rmass) {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+              dtfm = dtf / rmass[i];
+              v[i][0] += dtfm * f[i][0];
+              v[i][1] += dtfm * f[i][1];
+              v[i][2] += dtfm * f[i][2];
+              uw_x[i][0] += dtv * v[i][0];
+              uw_x[i][1] += dtv * v[i][1];
+              uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        } else {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+              dtfm = dtf / mass[type[i]];
+              v[i][0] += dtfm * f[i][0];
+              v[i][1] += dtfm * f[i][1];
+              v[i][2] += dtfm * f[i][2];
+              uw_x[i][0] += dtv * v[i][0];
+              uw_x[i][1] += dtv * v[i][1];
+              uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        }
+        for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
+
+        for(int j=0;j<NN;j++) {
+          vor_dist[j]=0.0;
+          for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { temp = uw_x[i][k] - center_x[3*i+k][j]; vor_dist[j] += temp*temp; }
+          vor_dist[j]=sqrt(vor_dist[j]);
+        }
+
+        vor_check = vor_dist[0];
+        for(int m=0;m<NN;m++)   vor_check = MIN(vor_check,vor_dist[m]);
+
+        if ( react_mark==0 &&  fabs(vor_dist[4]-vor_check)<1.0e-10 && oldm==3 ) {
+           cout<<"reactive: "<<g_step+1<<endl;
+           react_mark=1;
+        }
+        if ( react_mark==0 &&  fabs(vor_dist[4]-vor_check)<1.0e-10 && oldm==2 ) {
+           cout<<"reactive: "<<g_step+1<<endl;
+           react_mark=1;
+        }
+        if ( react_mark==0 &&  fabs(vor_dist[4]-vor_check)<1.0e-10 && oldm==1 ) {
+           cout<<"reactive: "<<g_step+1<<endl;
+           react_mark=1;
+        }
+        if ( react_mark==0 &&  fabs(vor_dist[4]-vor_check)<1.0e-10 && oldm==0 ) {
+           cout<<"reactive: "<<g_step+1<<endl;
+           react_mark=1;
+        }
+
+
+        for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)  oldm=m;
+
+
+
+} //------ final end
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::final_integrate()
+{
+  double dtfm;
+
+  double **v = atom->v;
+  double **f = atom->f;
+  double *mass = atom->mass;
+  double *rmass = atom->rmass;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
+
+  if (rmass) {
+    for (int i = 0; i < nlocal; i++) {
+      if (mask[i] & groupbit) {
+	dtfm = dtf / rmass[i];
+	v[i][0] += dtfm * f[i][0];
+	v[i][1] += dtfm * f[i][1];
+	v[i][2] += dtfm * f[i][2];
+      }
+    }
+
+  } else {
+    for (int i = 0; i < nlocal; i++) {
+      if (mask[i] & groupbit) {
+	dtfm = dtf / mass[type[i]];
+	v[i][0] += dtfm * f[i][0];
+	v[i][1] += dtfm * f[i][1];
+	v[i][2] += dtfm * f[i][2];
+      }
+    }
+  }
+
+  g_step++;
+
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::initial_integrate_respa(int vflag, int ilevel, int flag)
+{
+  if (flag) return;             // only used by NPT,NPH
+
+  dtv = step_respa[ilevel];
+  dtf = 0.5 * step_respa[ilevel] * force->ftm2v;
+
+  // innermost level - NVE update of v and x
+  // all other levels - NVE update of v
+
+  if (ilevel == 0) initial_integrate(vflag);
+  else final_integrate();
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::final_integrate_respa(int ilevel)
+{
+  dtf = 0.5 * step_respa[ilevel] * force->ftm2v;
+  final_integrate();
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixNVE::reset_dt()
+{
+  dtv = update->dt;
+  dtf = 0.5 * update->dt * force->ftm2v;
+}

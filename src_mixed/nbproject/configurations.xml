@@ -1,0 +1,2750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="94">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="ASPHERE">
+        <in>atom_vec_ellipsoid.cpp</in>
+        <in>compute_erotate_asphere.cpp</in>
+        <in>compute_temp_asphere.cpp</in>
+        <in>fix_npt_asphere.cpp</in>
+        <in>fix_nve_asphere.cpp</in>
+        <in>fix_nvt_asphere.cpp</in>
+        <in>pair_gayberne.cpp</in>
+        <in>pair_resquared.cpp</in>
+      </df>
+      <df name="CLASS2">
+        <in>angle_class2.cpp</in>
+        <in>bond_class2.cpp</in>
+        <in>dihedral_class2.cpp</in>
+        <in>improper_class2.cpp</in>
+        <in>pair_lj_class2.cpp</in>
+        <in>pair_lj_class2_coul_cut.cpp</in>
+        <in>pair_lj_class2_coul_long.cpp</in>
+      </df>
+      <df name="COLLOID">
+        <in>pair_colloid.cpp</in>
+        <in>pair_lubricate.cpp</in>
+      </df>
+      <df name="DIPOLE">
+        <in>atom_vec_dipole.cpp</in>
+        <in>pair_dipole_cut.cpp</in>
+      </df>
+      <df name="DPD">
+        <in>atom_vec_dpd.cpp</in>
+        <in>pair_dpd.cpp</in>
+      </df>
+      <df name="GPU">
+        <in>pair_gayberne_gpu.cpp</in>
+        <in>pair_lj_cut_gpu.cpp</in>
+      </df>
+      <df name="GRANULAR">
+        <in>atom_vec_granular.cpp</in>
+        <in>fix_freeze.cpp</in>
+        <in>fix_pour.cpp</in>
+        <in>fix_wall_gran.cpp</in>
+        <in>pair_gran_hertz_history.cpp</in>
+        <in>pair_gran_hooke.cpp</in>
+        <in>pair_gran_hooke_history.cpp</in>
+      </df>
+      <df name="KSPACE">
+        <in>ewald.cpp</in>
+        <in>fft3d.cpp</in>
+        <in>fft3d_wrap.cpp</in>
+        <in>pair_born_coul_long.cpp</in>
+        <in>pair_buck_coul_long.cpp</in>
+        <in>pair_coul_long.cpp</in>
+        <in>pair_lj_charmm_coul_long.cpp</in>
+        <in>pair_lj_cut_coul_long.cpp</in>
+        <in>pair_lj_cut_coul_long_tip4p.cpp</in>
+        <in>pppm.cpp</in>
+        <in>pppm_tip4p.cpp</in>
+        <in>remap.cpp</in>
+        <in>remap_wrap.cpp</in>
+      </df>
+      <df name="Linh_recent_codes">
+        <in>fix_nve.cpp</in>
+      </df>
+      <df name="Linh_updated">
+        <in>fix_nve.cpp</in>
+      </df>
+      <df name="MAKE">
+        <df name="Windows">
+          <in>erfc.cpp</in>
+          <in>sleep.cpp</in>
+        </df>
+      </df>
+      <df name="MANYBODY">
+        <in>pair_airebo.cpp</in>
+        <in>pair_eam.cpp</in>
+        <in>pair_eam_alloy.cpp</in>
+        <in>pair_eam_fs.cpp</in>
+        <in>pair_sw.cpp</in>
+        <in>pair_tersoff.cpp</in>
+        <in>pair_tersoff_zbl.cpp</in>
+      </df>
+      <df name="MEAM">
+        <in>pair_meam.cpp</in>
+      </df>
+      <df name="MOLECULE">
+        <in>angle.cpp</in>
+        <in>angle_charmm.cpp</in>
+        <in>angle_cosine.cpp</in>
+        <in>angle_cosine_delta.cpp</in>
+        <in>angle_cosine_squared.cpp</in>
+        <in>angle_harmonic.cpp</in>
+        <in>angle_hybrid.cpp</in>
+        <in>angle_table.cpp</in>
+        <in>atom_vec_angle.cpp</in>
+        <in>atom_vec_bond.cpp</in>
+        <in>atom_vec_full.cpp</in>
+        <in>atom_vec_molecular.cpp</in>
+        <in>bond.cpp</in>
+        <in>bond_fene.cpp</in>
+        <in>bond_fene_expand.cpp</in>
+        <in>bond_harmonic.cpp</in>
+        <in>bond_hybrid.cpp</in>
+        <in>bond_morse.cpp</in>
+        <in>bond_nonlinear.cpp</in>
+        <in>bond_quartic.cpp</in>
+        <in>bond_table.cpp</in>
+        <in>dihedral.cpp</in>
+        <in>dihedral_charmm.cpp</in>
+        <in>dihedral_harmonic.cpp</in>
+        <in>dihedral_helix.cpp</in>
+        <in>dihedral_hybrid.cpp</in>
+        <in>dihedral_multi_harmonic.cpp</in>
+        <in>dihedral_opls.cpp</in>
+        <in>dump_bond.cpp</in>
+        <in>fix_bond_break.cpp</in>
+        <in>fix_bond_create.cpp</in>
+        <in>fix_bond_swap.cpp</in>
+        <in>improper.cpp</in>
+        <in>improper_cvff.cpp</in>
+        <in>improper_harmonic.cpp</in>
+        <in>improper_hybrid.cpp</in>
+        <in>pair_lj_charmm_coul_charmm.cpp</in>
+        <in>pair_lj_charmm_coul_charmm_implicit.cpp</in>
+      </df>
+      <df name="Obj_linux">
+        <in>angle.cpp</in>
+        <in>angle_charmm.cpp</in>
+        <in>angle_cosine.cpp</in>
+        <in>angle_cosine_delta.cpp</in>
+        <in>angle_cosine_squared.cpp</in>
+        <in>angle_harmonic.cpp</in>
+        <in>angle_hybrid.cpp</in>
+        <in>angle_table.cpp</in>
+        <in>atom.cpp</in>
+        <in>atom_vec.cpp</in>
+        <in>atom_vec_angle.cpp</in>
+        <in>atom_vec_atomic.cpp</in>
+        <in>atom_vec_bond.cpp</in>
+        <in>atom_vec_charge.cpp</in>
+        <in>atom_vec_full.cpp</in>
+        <in>atom_vec_hybrid.cpp</in>
+        <in>atom_vec_molecular.cpp</in>
+        <in>bond.cpp</in>
+        <in>bond_fene.cpp</in>
+        <in>bond_fene_expand.cpp</in>
+        <in>bond_harmonic.cpp</in>
+        <in>bond_hybrid.cpp</in>
+        <in>bond_morse.cpp</in>
+        <in>bond_nonlinear.cpp</in>
+        <in>bond_quartic.cpp</in>
+        <in>bond_table.cpp</in>
+        <in>change_box.cpp</in>
+        <in>comm.cpp</in>
+        <in>compute.cpp</in>
+        <in>compute_centro_atom.cpp</in>
+        <in>compute_cna_atom.cpp</in>
+        <in>compute_coord_atom.cpp</in>
+        <in>compute_displace_atom.cpp</in>
+        <in>compute_erotate_sphere.cpp</in>
+        <in>compute_group_group.cpp</in>
+        <in>compute_heat_flux.cpp</in>
+        <in>compute_ke.cpp</in>
+        <in>compute_ke_atom.cpp</in>
+        <in>compute_pe.cpp</in>
+        <in>compute_pe_atom.cpp</in>
+        <in>compute_pressure.cpp</in>
+        <in>compute_reduce.cpp</in>
+        <in>compute_reduce_region.cpp</in>
+        <in>compute_stress_atom.cpp</in>
+        <in>compute_temp.cpp</in>
+        <in>compute_temp_com.cpp</in>
+        <in>compute_temp_deform.cpp</in>
+        <in>compute_temp_partial.cpp</in>
+        <in>compute_temp_profile.cpp</in>
+        <in>compute_temp_ramp.cpp</in>
+        <in>compute_temp_region.cpp</in>
+        <in>compute_temp_sphere.cpp</in>
+        <in>create_atoms.cpp</in>
+        <in>create_box.cpp</in>
+        <in>delete_atoms.cpp</in>
+        <in>delete_bonds.cpp</in>
+        <in>dihedral.cpp</in>
+        <in>dihedral_charmm.cpp</in>
+        <in>dihedral_harmonic.cpp</in>
+        <in>dihedral_helix.cpp</in>
+        <in>dihedral_hybrid.cpp</in>
+        <in>dihedral_multi_harmonic.cpp</in>
+        <in>dihedral_opls.cpp</in>
+        <in>displace_atoms.cpp</in>
+        <in>displace_box.cpp</in>
+        <in>domain.cpp</in>
+        <in>dump.cpp</in>
+        <in>dump_atom.cpp</in>
+        <in>dump_bond.cpp</in>
+        <in>dump_cfg.cpp</in>
+        <in>dump_custom.cpp</in>
+        <in>dump_dcd.cpp</in>
+        <in>dump_xyz.cpp</in>
+        <in>error.cpp</in>
+        <in>ewald.cpp</in>
+        <in>fft3d.cpp</in>
+        <in>fft3d_wrap.cpp</in>
+        <in>finish.cpp</in>
+        <in>fix.cpp</in>
+        <in>fix_add_force.cpp</in>
+        <in>fix_ave_atom.cpp</in>
+        <in>fix_ave_force.cpp</in>
+        <in>fix_ave_spatial.cpp</in>
+        <in>fix_ave_time.cpp</in>
+        <in>fix_bond_break.cpp</in>
+        <in>fix_bond_create.cpp</in>
+        <in>fix_bond_swap.cpp</in>
+        <in>fix_box_relax.cpp</in>
+        <in>fix_com.cpp</in>
+        <in>fix_coord_original.cpp</in>
+        <in>fix_deform.cpp</in>
+        <in>fix_deposit.cpp</in>
+        <in>fix_drag.cpp</in>
+        <in>fix_dt_reset.cpp</in>
+        <in>fix_efield.cpp</in>
+        <in>fix_enforce2d.cpp</in>
+        <in>fix_evaporate.cpp</in>
+        <in>fix_gravity.cpp</in>
+        <in>fix_gyration.cpp</in>
+        <in>fix_heat.cpp</in>
+        <in>fix_indent.cpp</in>
+        <in>fix_langevin.cpp</in>
+        <in>fix_line_force.cpp</in>
+        <in>fix_minimize.cpp</in>
+        <in>fix_momentum.cpp</in>
+        <in>fix_msd.cpp</in>
+        <in>fix_nph.cpp</in>
+        <in>fix_npt.cpp</in>
+        <in>fix_npt_sphere.cpp</in>
+        <in>fix_nve.cpp</in>
+        <in>fix_nve_limit.cpp</in>
+        <in>fix_nve_noforce.cpp</in>
+        <in>fix_nve_sphere.cpp</in>
+        <in>fix_nvt.cpp</in>
+        <in>fix_nvt_sllod.cpp</in>
+        <in>fix_nvt_sphere.cpp</in>
+        <in>fix_orient_fcc.cpp</in>
+        <in>fix_plane_force.cpp</in>
+        <in>fix_press_berendsen.cpp</in>
+        <in>fix_print.cpp</in>
+        <in>fix_rdf.cpp</in>
+        <in>fix_recenter.cpp</in>
+        <in>fix_respa.cpp</in>
+        <in>fix_rigid.cpp</in>
+        <in>fix_set_force.cpp</in>
+        <in>fix_shake.cpp</in>
+        <in>fix_shear_history.cpp</in>
+        <in>fix_spring.cpp</in>
+        <in>fix_spring_rg.cpp</in>
+        <in>fix_spring_self.cpp</in>
+        <in>fix_temp_berendsen.cpp</in>
+        <in>fix_temp_rescale.cpp</in>
+        <in>fix_thermal_conductivity.cpp</in>
+        <in>fix_tmd.cpp</in>
+        <in>fix_ttm.cpp</in>
+        <in>fix_viscosity.cpp</in>
+        <in>fix_viscous.cpp</in>
+        <in>fix_wall_lj126.cpp</in>
+        <in>fix_wall_lj93.cpp</in>
+        <in>fix_wall_reflect.cpp</in>
+        <in>fix_wiggle.cpp</in>
+        <in>force.cpp</in>
+        <in>group.cpp</in>
+        <in>improper.cpp</in>
+        <in>improper_cvff.cpp</in>
+        <in>improper_harmonic.cpp</in>
+        <in>improper_hybrid.cpp</in>
+        <in>input.cpp</in>
+        <in>integrate.cpp</in>
+        <in>kspace.cpp</in>
+        <in>lammps.cpp</in>
+        <in>lattice.cpp</in>
+        <in>library.cpp</in>
+        <in>main.cpp</in>
+        <in>memory.cpp</in>
+        <in>min.cpp</in>
+        <in>min_cg.cpp</in>
+        <in>min_hftn.cpp</in>
+        <in>min_linesearch.cpp</in>
+        <in>min_sd.cpp</in>
+        <in>minimize.cpp</in>
+        <in>modify.cpp</in>
+        <in>neigh_bond.cpp</in>
+        <in>neigh_derive.cpp</in>
+        <in>neigh_full.cpp</in>
+        <in>neigh_gran.cpp</in>
+        <in>neigh_half_bin.cpp</in>
+        <in>neigh_half_multi.cpp</in>
+        <in>neigh_half_nsq.cpp</in>
+        <in>neigh_list.cpp</in>
+        <in>neigh_request.cpp</in>
+        <in>neigh_respa.cpp</in>
+        <in>neigh_stencil.cpp</in>
+        <in>neighbor.cpp</in>
+        <in>output.cpp</in>
+        <in>pack.cpp</in>
+        <in>pair.cpp</in>
+        <in>pair_airebo.cpp</in>
+        <in>pair_born_coul_long.cpp</in>
+        <in>pair_buck.cpp</in>
+        <in>pair_buck_coul_cut.cpp</in>
+        <in>pair_buck_coul_long.cpp</in>
+        <in>pair_coul_cut.cpp</in>
+        <in>pair_coul_debye.cpp</in>
+        <in>pair_coul_long.cpp</in>
+        <in>pair_eam.cpp</in>
+        <in>pair_eam_alloy.cpp</in>
+        <in>pair_eam_fs.cpp</in>
+        <in>pair_hybrid.cpp</in>
+        <in>pair_hybrid_overlay.cpp</in>
+        <in>pair_lj96_cut.cpp</in>
+        <in>pair_lj_charmm_coul_charmm.cpp</in>
+        <in>pair_lj_charmm_coul_charmm_implicit.cpp</in>
+        <in>pair_lj_charmm_coul_long.cpp</in>
+        <in>pair_lj_cut.cpp</in>
+        <in>pair_lj_cut_coul_cut.cpp</in>
+        <in>pair_lj_cut_coul_debye.cpp</in>
+        <in>pair_lj_cut_coul_long.cpp</in>
+        <in>pair_lj_cut_coul_long_tip4p.cpp</in>
+        <in>pair_lj_expand.cpp</in>
+        <in>pair_lj_gromacs.cpp</in>
+        <in>pair_lj_gromacs_coul_gromacs.cpp</in>
+        <in>pair_lj_smooth.cpp</in>
+        <in>pair_morse.cpp</in>
+        <in>pair_soft.cpp</in>
+        <in>pair_sw.cpp</in>
+        <in>pair_table.cpp</in>
+        <in>pair_tersoff.cpp</in>
+        <in>pair_tersoff_zbl.cpp</in>
+        <in>pair_yukawa.cpp</in>
+        <in>pppm.cpp</in>
+        <in>pppm_tip4p.cpp</in>
+        <in>random_mars.cpp</in>
+        <in>random_park.cpp</in>
+        <in>read_data.cpp</in>
+        <in>read_restart.cpp</in>
+        <in>region.cpp</in>
+        <in>region_block.cpp</in>
+        <in>region_cone.cpp</in>
+        <in>region_cylinder.cpp</in>
+        <in>region_intersect.cpp</in>
+        <in>region_prism.cpp</in>
+        <in>region_sphere.cpp</in>
+        <in>region_union.cpp</in>
+        <in>remap.cpp</in>
+        <in>remap_wrap.cpp</in>
+        <in>replicate.cpp</in>
+        <in>respa.cpp</in>
+        <in>run.cpp</in>
+        <in>set.cpp</in>
+        <in>shell.cpp</in>
+        <in>special.cpp</in>
+        <in>temper.cpp</in>
+        <in>thermo.cpp</in>
+        <in>timer.cpp</in>
+        <in>universe.cpp</in>
+        <in>update.cpp</in>
+        <in>variable.cpp</in>
+        <in>velocity.cpp</in>
+        <in>verlet.cpp</in>
+        <in>write_restart.cpp</in>
+      </df>
+      <df name="Obj_tbird">
+        <in>angle.cpp</in>
+        <in>angle_charmm.cpp</in>
+        <in>angle_cosine.cpp</in>
+        <in>angle_cosine_delta.cpp</in>
+        <in>angle_cosine_squared.cpp</in>
+        <in>angle_harmonic.cpp</in>
+        <in>angle_hybrid.cpp</in>
+        <in>angle_table.cpp</in>
+        <in>atom.cpp</in>
+        <in>atom_vec.cpp</in>
+        <in>atom_vec_angle.cpp</in>
+        <in>atom_vec_atomic.cpp</in>
+        <in>atom_vec_bond.cpp</in>
+        <in>atom_vec_charge.cpp</in>
+        <in>atom_vec_full.cpp</in>
+        <in>atom_vec_hybrid.cpp</in>
+        <in>atom_vec_molecular.cpp</in>
+        <in>bond.cpp</in>
+        <in>bond_fene.cpp</in>
+        <in>bond_fene_expand.cpp</in>
+        <in>bond_harmonic.cpp</in>
+        <in>bond_hybrid.cpp</in>
+        <in>bond_morse.cpp</in>
+        <in>bond_nonlinear.cpp</in>
+        <in>bond_quartic.cpp</in>
+        <in>bond_table.cpp</in>
+        <in>change_box.cpp</in>
+        <in>comm.cpp</in>
+        <in>compute.cpp</in>
+        <in>compute_centro_atom.cpp</in>
+        <in>compute_cna_atom.cpp</in>
+        <in>compute_coord_atom.cpp</in>
+        <in>compute_displace_atom.cpp</in>
+        <in>compute_erotate_sphere.cpp</in>
+        <in>compute_group_group.cpp</in>
+        <in>compute_heat_flux.cpp</in>
+        <in>compute_ke.cpp</in>
+        <in>compute_ke_atom.cpp</in>
+        <in>compute_pe.cpp</in>
+        <in>compute_pe_atom.cpp</in>
+        <in>compute_pressure.cpp</in>
+        <in>compute_reduce.cpp</in>
+        <in>compute_reduce_region.cpp</in>
+        <in>compute_stress_atom.cpp</in>
+        <in>compute_temp.cpp</in>
+        <in>compute_temp_com.cpp</in>
+        <in>compute_temp_deform.cpp</in>
+        <in>compute_temp_partial.cpp</in>
+        <in>compute_temp_profile.cpp</in>
+        <in>compute_temp_ramp.cpp</in>
+        <in>compute_temp_region.cpp</in>
+        <in>compute_temp_sphere.cpp</in>
+        <in>create_atoms.cpp</in>
+        <in>create_box.cpp</in>
+        <in>delete_atoms.cpp</in>
+        <in>delete_bonds.cpp</in>
+        <in>dihedral.cpp</in>
+        <in>dihedral_charmm.cpp</in>
+        <in>dihedral_harmonic.cpp</in>
+        <in>dihedral_helix.cpp</in>
+        <in>dihedral_hybrid.cpp</in>
+        <in>dihedral_multi_harmonic.cpp</in>
+        <in>dihedral_opls.cpp</in>
+        <in>displace_atoms.cpp</in>
+        <in>displace_box.cpp</in>
+        <in>domain.cpp</in>
+        <in>dump.cpp</in>
+        <in>dump_atom.cpp</in>
+        <in>dump_bond.cpp</in>
+        <in>dump_cfg.cpp</in>
+        <in>dump_custom.cpp</in>
+        <in>dump_dcd.cpp</in>
+        <in>dump_xyz.cpp</in>
+        <in>error.cpp</in>
+        <in>ewald.cpp</in>
+        <in>fft3d.cpp</in>
+        <in>fft3d_wrap.cpp</in>
+        <in>finish.cpp</in>
+        <in>fix.cpp</in>
+        <in>fix_add_force.cpp</in>
+        <in>fix_ave_atom.cpp</in>
+        <in>fix_ave_force.cpp</in>
+        <in>fix_ave_spatial.cpp</in>
+        <in>fix_ave_time.cpp</in>
+        <in>fix_bond_break.cpp</in>
+        <in>fix_bond_create.cpp</in>
+        <in>fix_bond_swap.cpp</in>
+        <in>fix_box_relax.cpp</in>
+        <in>fix_com.cpp</in>
+        <in>fix_coord_original.cpp</in>
+        <in>fix_deform.cpp</in>
+        <in>fix_deposit.cpp</in>
+        <in>fix_drag.cpp</in>
+        <in>fix_dt_reset.cpp</in>
+        <in>fix_efield.cpp</in>
+        <in>fix_enforce2d.cpp</in>
+        <in>fix_evaporate.cpp</in>
+        <in>fix_gravity.cpp</in>
+        <in>fix_gyration.cpp</in>
+        <in>fix_heat.cpp</in>
+        <in>fix_indent.cpp</in>
+        <in>fix_langevin.cpp</in>
+        <in>fix_line_force.cpp</in>
+        <in>fix_minimize.cpp</in>
+        <in>fix_momentum.cpp</in>
+        <in>fix_msd.cpp</in>
+        <in>fix_nph.cpp</in>
+        <in>fix_npt.cpp</in>
+        <in>fix_npt_sphere.cpp</in>
+        <in>fix_nve.cpp</in>
+        <in>fix_nve_limit.cpp</in>
+        <in>fix_nve_noforce.cpp</in>
+        <in>fix_nve_sphere.cpp</in>
+        <in>fix_nvt.cpp</in>
+        <in>fix_nvt_sllod.cpp</in>
+        <in>fix_nvt_sphere.cpp</in>
+        <in>fix_orient_fcc.cpp</in>
+        <in>fix_plane_force.cpp</in>
+        <in>fix_press_berendsen.cpp</in>
+        <in>fix_print.cpp</in>
+        <in>fix_rdf.cpp</in>
+        <in>fix_recenter.cpp</in>
+        <in>fix_respa.cpp</in>
+        <in>fix_rigid.cpp</in>
+        <in>fix_set_force.cpp</in>
+        <in>fix_shake.cpp</in>
+        <in>fix_shear_history.cpp</in>
+        <in>fix_spring.cpp</in>
+        <in>fix_spring_rg.cpp</in>
+        <in>fix_spring_self.cpp</in>
+        <in>fix_temp_berendsen.cpp</in>
+        <in>fix_temp_rescale.cpp</in>
+        <in>fix_thermal_conductivity.cpp</in>
+        <in>fix_tmd.cpp</in>
+        <in>fix_ttm.cpp</in>
+        <in>fix_viscosity.cpp</in>
+        <in>fix_viscous.cpp</in>
+        <in>fix_wall_lj126.cpp</in>
+        <in>fix_wall_lj93.cpp</in>
+        <in>fix_wall_reflect.cpp</in>
+        <in>fix_wiggle.cpp</in>
+        <in>force.cpp</in>
+        <in>group.cpp</in>
+        <in>improper.cpp</in>
+        <in>improper_cvff.cpp</in>
+        <in>improper_harmonic.cpp</in>
+        <in>improper_hybrid.cpp</in>
+        <in>input.cpp</in>
+        <in>integrate.cpp</in>
+        <in>kspace.cpp</in>
+        <in>lammps.cpp</in>
+        <in>lattice.cpp</in>
+        <in>library.cpp</in>
+        <in>main.cpp</in>
+        <in>memory.cpp</in>
+        <in>min.cpp</in>
+        <in>min_cg.cpp</in>
+        <in>min_hftn.cpp</in>
+        <in>min_linesearch.cpp</in>
+        <in>min_sd.cpp</in>
+        <in>minimize.cpp</in>
+        <in>modify.cpp</in>
+        <in>neigh_bond.cpp</in>
+        <in>neigh_derive.cpp</in>
+        <in>neigh_full.cpp</in>
+        <in>neigh_gran.cpp</in>
+        <in>neigh_half_bin.cpp</in>
+        <in>neigh_half_multi.cpp</in>
+        <in>neigh_half_nsq.cpp</in>
+        <in>neigh_list.cpp</in>
+        <in>neigh_request.cpp</in>
+        <in>neigh_respa.cpp</in>
+        <in>neigh_stencil.cpp</in>
+        <in>neighbor.cpp</in>
+        <in>output.cpp</in>
+        <in>pack.cpp</in>
+        <in>pair.cpp</in>
+        <in>pair_airebo.cpp</in>
+        <in>pair_born_coul_long.cpp</in>
+        <in>pair_buck.cpp</in>
+        <in>pair_buck_coul_cut.cpp</in>
+        <in>pair_buck_coul_long.cpp</in>
+        <in>pair_coul_cut.cpp</in>
+        <in>pair_coul_debye.cpp</in>
+        <in>pair_coul_long.cpp</in>
+        <in>pair_eam.cpp</in>
+        <in>pair_eam_alloy.cpp</in>
+        <in>pair_eam_fs.cpp</in>
+        <in>pair_hybrid.cpp</in>
+        <in>pair_hybrid_overlay.cpp</in>
+        <in>pair_lj96_cut.cpp</in>
+        <in>pair_lj_charmm_coul_charmm.cpp</in>
+        <in>pair_lj_charmm_coul_charmm_implicit.cpp</in>
+        <in>pair_lj_charmm_coul_long.cpp</in>
+        <in>pair_lj_cut.cpp</in>
+        <in>pair_lj_cut_coul_cut.cpp</in>
+        <in>pair_lj_cut_coul_debye.cpp</in>
+        <in>pair_lj_cut_coul_long.cpp</in>
+        <in>pair_lj_cut_coul_long_tip4p.cpp</in>
+        <in>pair_lj_expand.cpp</in>
+        <in>pair_lj_gromacs.cpp</in>
+        <in>pair_lj_gromacs_coul_gromacs.cpp</in>
+        <in>pair_lj_smooth.cpp</in>
+        <in>pair_morse.cpp</in>
+        <in>pair_soft.cpp</in>
+        <in>pair_sw.cpp</in>
+        <in>pair_table.cpp</in>
+        <in>pair_tersoff.cpp</in>
+        <in>pair_tersoff_zbl.cpp</in>
+        <in>pair_yukawa.cpp</in>
+        <in>pppm.cpp</in>
+        <in>pppm_tip4p.cpp</in>
+        <in>random_mars.cpp</in>
+        <in>random_park.cpp</in>
+        <in>read_data.cpp</in>
+        <in>read_restart.cpp</in>
+        <in>region.cpp</in>
+        <in>region_block.cpp</in>
+        <in>region_cone.cpp</in>
+        <in>region_cylinder.cpp</in>
+        <in>region_intersect.cpp</in>
+        <in>region_prism.cpp</in>
+        <in>region_sphere.cpp</in>
+        <in>region_union.cpp</in>
+        <in>remap.cpp</in>
+        <in>remap_wrap.cpp</in>
+        <in>replicate.cpp</in>
+        <in>respa.cpp</in>
+        <in>run.cpp</in>
+        <in>set.cpp</in>
+        <in>shell.cpp</in>
+        <in>special.cpp</in>
+        <in>temper.cpp</in>
+        <in>thermo.cpp</in>
+        <in>timer.cpp</in>
+        <in>universe.cpp</in>
+        <in>update.cpp</in>
+        <in>variable.cpp</in>
+        <in>velocity.cpp</in>
+        <in>verlet.cpp</in>
+        <in>write_restart.cpp</in>
+      </df>
+      <df name="OPT">
+        <in>pair_eam_alloy_opt.cpp</in>
+        <in>pair_eam_fs_opt.cpp</in>
+        <in>pair_eam_opt.cpp</in>
+        <in>pair_lj_charmm_coul_long_opt.cpp</in>
+        <in>pair_lj_cut_opt.cpp</in>
+        <in>pair_morse_opt.cpp</in>
+      </df>
+      <df name="PERI">
+        <in>atom_vec_peri.cpp</in>
+        <in>compute_damage_atom.cpp</in>
+        <in>fix_peri_neigh.cpp</in>
+        <in>pair_peri_pmb.cpp</in>
+      </df>
+      <df name="POEMS">
+        <in>fix_poems.cpp</in>
+      </df>
+      <df name="PRD">
+        <in>compute_event_displace.cpp</in>
+        <in>fix_event.cpp</in>
+        <in>prd.cpp</in>
+      </df>
+      <df name="REAX">
+        <in>fix_reax_bonds.cpp</in>
+        <in>pair_reax.cpp</in>
+      </df>
+      <df name="STUBS">
+        <in>mpi.cpp</in>
+      </df>
+      <df name="USER-ACKLAND">
+        <in>compute_ackland_atom.cpp</in>
+      </df>
+      <df name="USER-ATC">
+        <in>fix_atc.cpp</in>
+      </df>
+      <df name="USER-CG-CMM">
+        <in>angle_cg_cmm.cpp</in>
+        <in>cg_cmm_parms.cpp</in>
+        <in>pair_cg_cmm.cpp</in>
+        <in>pair_cg_cmm_coul_cut.cpp</in>
+        <in>pair_cg_cmm_coul_long.cpp</in>
+        <in>pair_cmm_common.cpp</in>
+      </df>
+      <df name="USER-EWALDN">
+        <in>ewald_n.cpp</in>
+        <in>pair_buck_coul.cpp</in>
+        <in>pair_lj_coul.cpp</in>
+      </df>
+      <df name="USER-SMD">
+        <in>fix_smd.cpp</in>
+      </df>
+      <df name="XTC">
+        <in>dump_xtc.cpp</in>
+        <in>xdr_compat.cpp</in>
+      </df>
+      <in>angle.cpp</in>
+      <in>angle_charmm.cpp</in>
+      <in>angle_cosine.cpp</in>
+      <in>angle_cosine_delta.cpp</in>
+      <in>angle_cosine_squared.cpp</in>
+      <in>angle_harmonic.cpp</in>
+      <in>angle_hybrid.cpp</in>
+      <in>angle_table.cpp</in>
+      <in>atom.cpp</in>
+      <in>atom_vec.cpp</in>
+      <in>atom_vec_angle.cpp</in>
+      <in>atom_vec_atomic.cpp</in>
+      <in>atom_vec_bond.cpp</in>
+      <in>atom_vec_charge.cpp</in>
+      <in>atom_vec_full.cpp</in>
+      <in>atom_vec_hybrid.cpp</in>
+      <in>atom_vec_molecular.cpp</in>
+      <in>bond.cpp</in>
+      <in>bond_fene.cpp</in>
+      <in>bond_fene_expand.cpp</in>
+      <in>bond_harmonic.cpp</in>
+      <in>bond_hybrid.cpp</in>
+      <in>bond_morse.cpp</in>
+      <in>bond_nonlinear.cpp</in>
+      <in>bond_quartic.cpp</in>
+      <in>bond_table.cpp</in>
+      <in>change_box.cpp</in>
+      <in>comm.cpp</in>
+      <in>compute.cpp</in>
+      <in>compute_centro_atom.cpp</in>
+      <in>compute_cna_atom.cpp</in>
+      <in>compute_coord_atom.cpp</in>
+      <in>compute_displace_atom.cpp</in>
+      <in>compute_erotate_sphere.cpp</in>
+      <in>compute_group_group.cpp</in>
+      <in>compute_heat_flux.cpp</in>
+      <in>compute_ke.cpp</in>
+      <in>compute_ke_atom.cpp</in>
+      <in>compute_pe.cpp</in>
+      <in>compute_pe_atom.cpp</in>
+      <in>compute_pressure.cpp</in>
+      <in>compute_reduce.cpp</in>
+      <in>compute_reduce_region.cpp</in>
+      <in>compute_stress_atom.cpp</in>
+      <in>compute_temp.cpp</in>
+      <in>compute_temp_com.cpp</in>
+      <in>compute_temp_deform.cpp</in>
+      <in>compute_temp_partial.cpp</in>
+      <in>compute_temp_profile.cpp</in>
+      <in>compute_temp_ramp.cpp</in>
+      <in>compute_temp_region.cpp</in>
+      <in>compute_temp_sphere.cpp</in>
+      <in>create_atoms.cpp</in>
+      <in>create_box.cpp</in>
+      <in>delete_atoms.cpp</in>
+      <in>delete_bonds.cpp</in>
+      <in>dihedral.cpp</in>
+      <in>dihedral_charmm.cpp</in>
+      <in>dihedral_harmonic.cpp</in>
+      <in>dihedral_helix.cpp</in>
+      <in>dihedral_hybrid.cpp</in>
+      <in>dihedral_multi_harmonic.cpp</in>
+      <in>dihedral_opls.cpp</in>
+      <in>displace_atoms.cpp</in>
+      <in>displace_box.cpp</in>
+      <in>domain.cpp</in>
+      <in>dump.cpp</in>
+      <in>dump_atom.cpp</in>
+      <in>dump_bond.cpp</in>
+      <in>dump_cfg.cpp</in>
+      <in>dump_custom.cpp</in>
+      <in>dump_dcd.cpp</in>
+      <in>dump_xyz.cpp</in>
+      <in>error.cpp</in>
+      <in>ewald.cpp</in>
+      <in>fft3d.cpp</in>
+      <in>fft3d_wrap.cpp</in>
+      <in>finish.cpp</in>
+      <in>fix.cpp</in>
+      <in>fix_add_force.cpp</in>
+      <in>fix_ave_atom.cpp</in>
+      <in>fix_ave_force.cpp</in>
+      <in>fix_ave_spatial.cpp</in>
+      <in>fix_ave_time.cpp</in>
+      <in>fix_bond_break.cpp</in>
+      <in>fix_bond_create.cpp</in>
+      <in>fix_bond_swap.cpp</in>
+      <in>fix_box_relax.cpp</in>
+      <in>fix_com.cpp</in>
+      <in>fix_coord_original.cpp</in>
+      <in>fix_deform.cpp</in>
+      <in>fix_deposit.cpp</in>
+      <in>fix_drag.cpp</in>
+      <in>fix_dt_reset.cpp</in>
+      <in>fix_efield.cpp</in>
+      <in>fix_enforce2d.cpp</in>
+      <in>fix_evaporate.cpp</in>
+      <in>fix_gravity.cpp</in>
+      <in>fix_gyration.cpp</in>
+      <in>fix_heat.cpp</in>
+      <in>fix_indent.cpp</in>
+      <in>fix_langevin.cpp</in>
+      <in>fix_line_force.cpp</in>
+      <in>fix_minimize.cpp</in>
+      <in>fix_momentum.cpp</in>
+      <in>fix_msd.cpp</in>
+      <in>fix_nph.cpp</in>
+      <in>fix_npt.cpp</in>
+      <in>fix_npt_sphere.cpp</in>
+      <in>fix_nve.cpp</in>
+      <in>fix_nve_limit.cpp</in>
+      <in>fix_nve_noforce.cpp</in>
+      <in>fix_nve_sphere.cpp</in>
+      <in>fix_nvt.cpp</in>
+      <in>fix_nvt_sllod.cpp</in>
+      <in>fix_nvt_sphere.cpp</in>
+      <in>fix_orient_fcc.cpp</in>
+      <in>fix_plane_force.cpp</in>
+      <in>fix_press_berendsen.cpp</in>
+      <in>fix_print.cpp</in>
+      <in>fix_rdf.cpp</in>
+      <in>fix_recenter.cpp</in>
+      <in>fix_respa.cpp</in>
+      <in>fix_rigid.cpp</in>
+      <in>fix_set_force.cpp</in>
+      <in>fix_shake.cpp</in>
+      <in>fix_shear_history.cpp</in>
+      <in>fix_spring.cpp</in>
+      <in>fix_spring_rg.cpp</in>
+      <in>fix_spring_self.cpp</in>
+      <in>fix_temp_berendsen.cpp</in>
+      <in>fix_temp_rescale.cpp</in>
+      <in>fix_thermal_conductivity.cpp</in>
+      <in>fix_tmd.cpp</in>
+      <in>fix_ttm.cpp</in>
+      <in>fix_viscosity.cpp</in>
+      <in>fix_viscous.cpp</in>
+      <in>fix_wall_lj126.cpp</in>
+      <in>fix_wall_lj93.cpp</in>
+      <in>fix_wall_reflect.cpp</in>
+      <in>fix_wiggle.cpp</in>
+      <in>force.cpp</in>
+      <in>group.cpp</in>
+      <in>improper.cpp</in>
+      <in>improper_cvff.cpp</in>
+      <in>improper_harmonic.cpp</in>
+      <in>improper_hybrid.cpp</in>
+      <in>input.cpp</in>
+      <in>integrate.cpp</in>
+      <in>kspace.cpp</in>
+      <in>lammps.cpp</in>
+      <in>lattice.cpp</in>
+      <in>library.cpp</in>
+      <in>main.cpp</in>
+      <in>memory.cpp</in>
+      <in>min.cpp</in>
+      <in>min_cg.cpp</in>
+      <in>min_hftn.cpp</in>
+      <in>min_linesearch.cpp</in>
+      <in>min_sd.cpp</in>
+      <in>minimize.cpp</in>
+      <in>modify.cpp</in>
+      <in>neigh_bond.cpp</in>
+      <in>neigh_derive.cpp</in>
+      <in>neigh_full.cpp</in>
+      <in>neigh_gran.cpp</in>
+      <in>neigh_half_bin.cpp</in>
+      <in>neigh_half_multi.cpp</in>
+      <in>neigh_half_nsq.cpp</in>
+      <in>neigh_list.cpp</in>
+      <in>neigh_request.cpp</in>
+      <in>neigh_respa.cpp</in>
+      <in>neigh_stencil.cpp</in>
+      <in>neighbor.cpp</in>
+      <in>output.cpp</in>
+      <in>pack.cpp</in>
+      <in>pair.cpp</in>
+      <in>pair_airebo.cpp</in>
+      <in>pair_born_coul_long.cpp</in>
+      <in>pair_buck.cpp</in>
+      <in>pair_buck_coul_cut.cpp</in>
+      <in>pair_buck_coul_long.cpp</in>
+      <in>pair_coul_cut.cpp</in>
+      <in>pair_coul_debye.cpp</in>
+      <in>pair_coul_long.cpp</in>
+      <in>pair_eam.cpp</in>
+      <in>pair_eam_alloy.cpp</in>
+      <in>pair_eam_fs.cpp</in>
+      <in>pair_hybrid.cpp</in>
+      <in>pair_hybrid_overlay.cpp</in>
+      <in>pair_lj96_cut.cpp</in>
+      <in>pair_lj_charmm_coul_charmm.cpp</in>
+      <in>pair_lj_charmm_coul_charmm_implicit.cpp</in>
+      <in>pair_lj_charmm_coul_long.cpp</in>
+      <in>pair_lj_cut.cpp</in>
+      <in>pair_lj_cut_coul_cut.cpp</in>
+      <in>pair_lj_cut_coul_debye.cpp</in>
+      <in>pair_lj_cut_coul_long.cpp</in>
+      <in>pair_lj_cut_coul_long_tip4p.cpp</in>
+      <in>pair_lj_expand.cpp</in>
+      <in>pair_lj_gromacs.cpp</in>
+      <in>pair_lj_gromacs_coul_gromacs.cpp</in>
+      <in>pair_lj_smooth.cpp</in>
+      <in>pair_morse.cpp</in>
+      <in>pair_soft.cpp</in>
+      <in>pair_sw.cpp</in>
+      <in>pair_table.cpp</in>
+      <in>pair_tersoff.cpp</in>
+      <in>pair_tersoff_zbl.cpp</in>
+      <in>pair_yukawa.cpp</in>
+      <in>pppm.cpp</in>
+      <in>pppm_tip4p.cpp</in>
+      <in>random_mars.cpp</in>
+      <in>random_park.cpp</in>
+      <in>read_data.cpp</in>
+      <in>read_restart.cpp</in>
+      <in>region.cpp</in>
+      <in>region_block.cpp</in>
+      <in>region_cone.cpp</in>
+      <in>region_cylinder.cpp</in>
+      <in>region_intersect.cpp</in>
+      <in>region_prism.cpp</in>
+      <in>region_sphere.cpp</in>
+      <in>region_union.cpp</in>
+      <in>remap.cpp</in>
+      <in>remap_wrap.cpp</in>
+      <in>replicate.cpp</in>
+      <in>respa.cpp</in>
+      <in>run.cpp</in>
+      <in>set.cpp</in>
+      <in>shell.cpp</in>
+      <in>special.cpp</in>
+      <in>temper.cpp</in>
+      <in>thermo.cpp</in>
+      <in>timer.cpp</in>
+      <in>universe.cpp</in>
+      <in>update.cpp</in>
+      <in>variable.cpp</in>
+      <in>velocity.cpp</in>
+      <in>verlet.cpp</in>
+      <in>write_restart.cpp</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="ASPHERE/atom_vec_ellipsoid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ASPHERE/compute_erotate_asphere.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="ASPHERE/compute_temp_asphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ASPHERE/fix_npt_asphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ASPHERE/fix_nve_asphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ASPHERE/fix_nvt_asphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ASPHERE/pair_gayberne.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ASPHERE/pair_resquared.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/angle_class2.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/bond_class2.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/dihedral_class2.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/improper_class2.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/pair_lj_class2.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/pair_lj_class2_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="CLASS2/pair_lj_class2_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="COLLOID/pair_colloid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="COLLOID/pair_lubricate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="DIPOLE/atom_vec_dipole.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="DIPOLE/pair_dipole_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="DPD/atom_vec_dpd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="DPD/pair_dpd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GPU/pair_gayberne_gpu.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GPU/pair_lj_cut_gpu.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GRANULAR/atom_vec_granular.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GRANULAR/fix_freeze.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GRANULAR/fix_pour.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GRANULAR/fix_wall_gran.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GRANULAR/pair_gran_hertz_history.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="GRANULAR/pair_gran_hooke.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GRANULAR/pair_gran_hooke_history.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="KSPACE/ewald.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/fft3d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/fft3d_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/pair_born_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/pair_buck_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/pair_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/pair_lj_charmm_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="KSPACE/pair_lj_cut_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/pair_lj_cut_coul_long_tip4p.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="KSPACE/pppm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/pppm_tip4p.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/remap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="KSPACE/remap_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Linh_recent_codes/fix_nve.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Linh_updated/fix_nve.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MAKE/Windows/erfc.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MAKE/Windows/sleep.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_airebo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_eam.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_eam_alloy.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_eam_fs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_sw.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_tersoff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MANYBODY/pair_tersoff_zbl.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MEAM/pair_meam.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_cosine.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_cosine_delta.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_cosine_squared.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/angle_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/atom_vec_angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/atom_vec_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/atom_vec_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/atom_vec_molecular.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_fene.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_fene_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_nonlinear.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_quartic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/bond_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral_helix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral_multi_harmonic.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="MOLECULE/dihedral_opls.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/dump_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/fix_bond_break.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/fix_bond_create.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/fix_bond_swap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/improper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/improper_cvff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/improper_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/improper_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="MOLECULE/pair_lj_charmm_coul_charmm.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="MOLECULE/pair_lj_charmm_coul_charmm_implicit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="OPT/pair_eam_alloy_opt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="OPT/pair_eam_fs_opt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="OPT/pair_eam_opt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="OPT/pair_lj_charmm_coul_long_opt.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="OPT/pair_lj_cut_opt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="OPT/pair_morse_opt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_cosine.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_cosine_delta.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_cosine_squared.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/angle_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_atomic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_charge.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/atom_vec_molecular.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_fene.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_fene_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_nonlinear.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_quartic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/bond_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/change_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/comm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_centro_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_cna_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_coord_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_displace_atom.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_erotate_sphere.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_group_group.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_heat_flux.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_ke.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_ke_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_pe.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_pe_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_pressure.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_reduce.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_reduce_region.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_stress_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_com.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_deform.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_partial.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_profile.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_ramp.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/compute_temp_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/create_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/create_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/delete_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/delete_bonds.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral_helix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral_multi_harmonic.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/dihedral_opls.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/displace_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/displace_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/domain.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump_cfg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump_custom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump_dcd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/dump_xyz.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/error.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/ewald.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fft3d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fft3d_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/finish.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_add_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_ave_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_ave_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_ave_spatial.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_ave_time.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_bond_break.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_bond_create.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_bond_swap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_box_relax.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_com.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_coord_original.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_deform.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_deposit.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_drag.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_dt_reset.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_efield.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_enforce2d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_evaporate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_gravity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_gyration.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_heat.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_indent.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_langevin.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_line_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_minimize.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_momentum.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_msd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nph.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_npt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_npt_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nve.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nve_limit.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nve_noforce.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nve_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nvt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nvt_sllod.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_nvt_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_orient_fcc.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_plane_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_press_berendsen.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_print.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_rdf.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_recenter.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_rigid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_set_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_shake.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_shear_history.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_spring.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_spring_rg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_spring_self.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_temp_berendsen.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_temp_rescale.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_thermal_conductivity.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_tmd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_ttm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_viscosity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_viscous.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_wall_lj126.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_wall_lj93.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_wall_reflect.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/fix_wiggle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/group.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/improper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/improper_cvff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/improper_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/improper_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/input.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/integrate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/kspace.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/lammps.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/lattice.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/library.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/main.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/memory.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/min.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/min_cg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/min_hftn.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/min_linesearch.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/min_sd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/minimize.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/modify.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_derive.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_gran.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_half_bin.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_half_multi.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_half_nsq.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_list.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_request.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neigh_stencil.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/neighbor.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/output.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pack.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_airebo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_born_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_buck.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_buck_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_buck_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_coul_debye.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_eam.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_eam_alloy.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_eam_fs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_hybrid_overlay.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj96_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_charmm_coul_charmm.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_charmm_coul_charmm_implicit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_charmm_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_cut_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_cut_coul_debye.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_cut_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_cut_coul_long_tip4p.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_gromacs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_gromacs_coul_gromacs.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_lj_smooth.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_soft.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_sw.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_tersoff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_tersoff_zbl.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pair_yukawa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pppm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/pppm_tip4p.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/random_mars.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/random_park.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/read_data.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/read_restart.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_block.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_cone.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_cylinder.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_intersect.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_prism.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/region_union.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/remap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/remap_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/replicate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/run.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/set.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/shell.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/special.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/temper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/thermo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/timer.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/universe.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/update.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/variable.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/velocity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/verlet.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_linux/write_restart.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_cosine.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_cosine_delta.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_cosine_squared.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/angle_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_atomic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_charge.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/atom_vec_molecular.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_fene.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_fene_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_nonlinear.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_quartic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/bond_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/change_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/comm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_centro_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_cna_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_coord_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_displace_atom.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_erotate_sphere.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_group_group.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_heat_flux.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_ke.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_ke_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_pe.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_pe_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_pressure.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_reduce.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_reduce_region.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_stress_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_com.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_deform.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_partial.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_profile.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_ramp.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/compute_temp_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/create_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/create_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/delete_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/delete_bonds.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral_helix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral_multi_harmonic.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/dihedral_opls.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/displace_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/displace_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/domain.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump_cfg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump_custom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump_dcd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/dump_xyz.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/error.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/ewald.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fft3d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fft3d_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/finish.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_add_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_ave_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_ave_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_ave_spatial.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_ave_time.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_bond_break.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_bond_create.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_bond_swap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_box_relax.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_com.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_coord_original.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_deform.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_deposit.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_drag.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_dt_reset.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_efield.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_enforce2d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_evaporate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_gravity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_gyration.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_heat.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_indent.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_langevin.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_line_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_minimize.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_momentum.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_msd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nph.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_npt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_npt_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nve.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nve_limit.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nve_noforce.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nve_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nvt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nvt_sllod.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_nvt_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_orient_fcc.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_plane_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_press_berendsen.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_print.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_rdf.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_recenter.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_rigid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_set_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_shake.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_shear_history.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_spring.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_spring_rg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_spring_self.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_temp_berendsen.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_temp_rescale.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_thermal_conductivity.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_tmd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_ttm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_viscosity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_viscous.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_wall_lj126.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_wall_lj93.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_wall_reflect.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/fix_wiggle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/group.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/improper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/improper_cvff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/improper_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/improper_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/input.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/integrate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/kspace.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/lammps.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/lattice.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/library.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/main.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/memory.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/min.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/min_cg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/min_hftn.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/min_linesearch.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/min_sd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/minimize.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/modify.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_derive.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_gran.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_half_bin.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_half_multi.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_half_nsq.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_list.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_request.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neigh_stencil.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/neighbor.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/output.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pack.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_airebo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_born_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_buck.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_buck_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_buck_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_coul_debye.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_eam.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_eam_alloy.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_eam_fs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_hybrid_overlay.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj96_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_charmm_coul_charmm.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_charmm_coul_charmm_implicit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_charmm_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_cut_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_cut_coul_debye.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_cut_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_cut_coul_long_tip4p.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_gromacs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_gromacs_coul_gromacs.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_lj_smooth.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_soft.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_sw.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_tersoff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_tersoff_zbl.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pair_yukawa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pppm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/pppm_tip4p.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/random_mars.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/random_park.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/read_data.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/read_restart.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_block.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_cone.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_cylinder.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_intersect.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_prism.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/region_union.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/remap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/remap_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/replicate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/run.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/set.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/shell.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/special.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/temper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/thermo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/timer.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/universe.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/update.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/variable.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/velocity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/verlet.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="Obj_tbird/write_restart.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PERI/atom_vec_peri.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PERI/compute_damage_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PERI/fix_peri_neigh.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PERI/pair_peri_pmb.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="POEMS/fix_poems.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PRD/compute_event_displace.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PRD/fix_event.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="PRD/prd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="REAX/fix_reax_bonds.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="REAX/pair_reax.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="STUBS/mpi.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-ACKLAND/compute_ackland_atom.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="USER-ATC/fix_atc.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-CG-CMM/angle_cg_cmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-CG-CMM/cg_cmm_parms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-CG-CMM/pair_cg_cmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-CG-CMM/pair_cg_cmm_coul_cut.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="USER-CG-CMM/pair_cg_cmm_coul_long.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="USER-CG-CMM/pair_cmm_common.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-EWALDN/ewald_n.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-EWALDN/pair_buck_coul.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-EWALDN/pair_lj_coul.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="USER-SMD/fix_smd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="XTC/dump_xtc.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="XTC/xdr_compat.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_cosine.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_cosine_delta.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_cosine_squared.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="angle_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_angle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_atomic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_charge.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="atom_vec_molecular.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_fene.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_fene_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_nonlinear.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_quartic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="bond_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="change_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="comm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_centro_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_cna_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_coord_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_displace_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_erotate_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_group_group.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_heat_flux.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_ke.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_ke_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_pe.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_pe_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_pressure.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_reduce.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_reduce_region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_stress_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_com.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_deform.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_partial.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_profile.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_ramp.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="compute_temp_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="create_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="create_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="delete_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="delete_bonds.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral_helix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral_multi_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dihedral_opls.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="displace_atoms.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="displace_box.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="domain.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump_cfg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump_custom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump_dcd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="dump_xyz.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="error.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ewald.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fft3d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fft3d_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="finish.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_add_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_ave_atom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_ave_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_ave_spatial.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_ave_time.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_bond_break.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_bond_create.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_bond_swap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_box_relax.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_com.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_coord_original.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_deform.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_deposit.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_drag.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_dt_reset.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_efield.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_enforce2d.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_evaporate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_gravity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_gyration.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_heat.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_indent.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_langevin.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_line_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_minimize.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_momentum.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_msd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nph.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_npt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_npt_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nve.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nve_limit.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nve_noforce.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nve_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nvt.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nvt_sllod.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_nvt_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_orient_fcc.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_plane_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_press_berendsen.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_print.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_rdf.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_recenter.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_rigid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_set_force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_shake.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_shear_history.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_spring.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_spring_rg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_spring_self.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_temp_berendsen.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_temp_rescale.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_thermal_conductivity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_tmd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_ttm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_viscosity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_viscous.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_wall_lj126.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_wall_lj93.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_wall_reflect.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="fix_wiggle.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="force.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="group.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="improper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="improper_cvff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="improper_harmonic.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="improper_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="input.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="integrate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="kspace.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="lammps.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="lattice.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="library.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="memory.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="min.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="min_cg.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="min_hftn.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="min_linesearch.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="min_sd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="minimize.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="modify.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_bond.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_derive.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_full.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_gran.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_half_bin.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_half_multi.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_half_nsq.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_list.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_request.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neigh_stencil.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="neighbor.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="output.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pack.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_airebo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_born_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_buck.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_buck_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_buck_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_coul_debye.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_eam.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_eam_alloy.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_eam_fs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_hybrid.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_hybrid_overlay.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj96_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_charmm_coul_charmm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_charmm_coul_charmm_implicit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="pair_lj_charmm_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_cut_coul_cut.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_cut_coul_debye.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_cut_coul_long.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_cut_coul_long_tip4p.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_expand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_gromacs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_gromacs_coul_gromacs.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_lj_smooth.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_morse.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_soft.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_sw.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_table.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_tersoff.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_tersoff_zbl.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pair_yukawa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pppm.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="pppm_tip4p.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="random_mars.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="random_park.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="read_data.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="read_restart.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_block.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_cone.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_cylinder.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_intersect.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_prism.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_sphere.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="region_union.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="remap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="remap_wrap.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="replicate.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="respa.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="run.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="set.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="shell.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="special.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="temper.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="thermo.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="timer.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="universe.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="update.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="variable.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="velocity.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="verlet.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="write_restart.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
