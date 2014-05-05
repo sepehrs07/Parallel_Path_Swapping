@@ -32,7 +32,7 @@
 #include "domain.h"
 #include <iostream>
 #include <cstdlib>
-#include <omp.h>
+#include <mpi.h>
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -96,8 +96,7 @@ void FixNVE::init()
 // static double    temp_V_0[20000][3];
 // static double   add_force[20000];
  static double   atom_mass[14000];
- static double   int_time = 0;
- static double   t_start;
+
  static double       st3_x[14000][3];
  static double       st3_v[14000][3];
  static double       old_v[14000][3];
@@ -105,8 +104,8 @@ void FixNVE::init()
 
 // static double   Al_mass = 26.982; //made same as potential file (dw)
  static double   H, PE_0, velo_magn, ke_added, cum_E;
- static int      tao_b, tao_f, step_bck, step_fwd, oldm, picked_m,N_max;
- static int      success_index, crossed_interface, previous_success, old_success_index;
+ static int      tao_b, tao_f, step_bck, step_fwd, oldm, picked_m,N_max, rec_step;
+ static int      success_index, crossed_interface, previous_success, old_success_index, check_recrossing;
  static int      unique_trajectories =0;
  static int      ensemble_trajectories = 0;
  const int      N_hist = 300;
@@ -130,23 +129,21 @@ void FixNVE::init()
  static int      trajectory_finished=1;
  static int      time_L_old = 10000;
  static int      rsteps=100;
-
+ static int      rec_max = 20000;
  static int      NN; // = 11;                  //number of cells from cell #0 to cell #NN-1
 // static int      cell_ground = 2;
  static int      cell_start;
  static int      lamda;          // last cell # (from 0 to NN-1) (trajectory stops when it touches this cell)
-
+ static int sim_temperature;
+ static double k_B = 0.000086173324;
+ 
 /* ----------------------------------------------------------------------
    allow for both per-type and per-atom mass
 ------------------------------------------------------------------------- */
 
 void FixNVE::initial_integrate(int vflag)
-{ 
-  //#pragma omp barrier
-  omp_set_num_threads(4);
-//  t_start = omp_get_wtime();
-//  cout<<"g_step is: "<<g_step<<endl;
- /* TIS variables */
+{
+  /* TIS variables */
   double   old_ke, new_ke, ave_E, sample_mass, success_rate, TIS_prob;
   double   rand_ensemble,rand_U, rand_U1, rand_U2, rand_G, prob, temp, trash, vor_check;
   double   vor_dist[NN];
@@ -172,16 +169,15 @@ void FixNVE::initial_integrate(int vflag)
   int me;
   MPI_Comm_rank(universe->uworld, &me);
   
-//  if (me == 0)
- // {
-  
+
+  char  buf[64];
+  sprintf(buf,"TIS_path.%d",me);
+  FILE * pFile;
+  pFile = fopen (buf,"a+");  
+  rewind (pFile);
+
   /* Initialization for first call to fix_nve */
     if(g_step==0) {
-      #pragma omp parallel
-      {
-      cout<<"number of threads is: "<<omp_get_num_threads()<<endl;
-      }
-      t_start = omp_get_wtime();
       /* read if constraint is on/off and box sizes */
       ifstream vector("pos.read");
       vector>>xlo>>xhi;
@@ -196,20 +192,23 @@ void FixNVE::initial_integrate(int vflag)
       BL[2] = zhi-zlo;
 
       /* read interface position */
-      ifstream inld("ld_run.in");
+      /*ifstream inld("ld_run.in");
       inld>>lamda;
-      inld.close();
-      
-      ifstream inld1("seed.in");
+      inld.close();*/
+      lamda = me + 3;
+      char seed_buf[64];
+      sprintf(seed_buf, "seed%d.in",me);      
+      ifstream inld1(seed_buf);
       inld1>>ranseed;
       inld1.close();
+      fprintf(pFile,"seed is %d \n",ranseed);
       srand(ranseed);
 
-      char buf1[128];
+      /*char buf1[128];
       sprintf(buf1,"cp ld%d.in ld_run.in",lamda+1);
-      system (buf1);
+      system (buf1);*/
 
-      NN = lamda+2+3;
+      NN = lamda+4;
       cell_start = lamda+1;
 
       /* read PE at beginning and Interface*/
@@ -218,7 +217,15 @@ void FixNVE::initial_integrate(int vflag)
       ifstream indata0 (buf0);
       for(int i=0;i<cell_start;i++)  indata0>>PE_0;
       indata0.close();
-      cout<<"from interface #"<<lamda<<"  to #"<<lamda+1<<endl;
+
+      /*char  buf[64];
+      sprintf(buf,"fuck.%d",me);
+      FILE * pFile;
+      
+      pFile = fopen (buf,"w"); */
+      fprintf(pFile,"\n from interface %d to %d \n \n", lamda+1, lamda+2);
+      //fclose (pFile);
+      //cout<<"from interface #"<<lamda<<"  to #"<<lamda+1<<endl;
 
       // read starting configuration 
       char bufdt[128];
@@ -237,39 +244,59 @@ void FixNVE::initial_integrate(int vflag)
         for(int i=0;i<nlocal;i++)   indata>>trash>>center_x[3*i+0][j]>>center_x[3*i+1][j]>>center_x[3*i+2][j];
         indata.close();
       }
+
+      for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++) {x[i][k] = center_x[3*i+k][lamda+1];}
+
+
       //initiallize X_0 and V_0 (dw)
       for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)  { X_0[i][k] = x[i][k]; V_0[i][k] = v[i][k]; }
 
 
+      ifstream indata2("temperature.data");
+      indata2>>sim_temperature;
+      indata2.close();
+
+      //cout<<"B is "<<1/(sim_temperature*k_B)<<endl;
+      fprintf(pFile,"\n B is %f \n", 1/(sim_temperature*k_B));
     }   // end of initialization activities for first call to fix_nve
 
 
-//    double t_start = omp_get_wtime();
+
     // initialize a new trajectory and record findings from finished trajectory
     if(trajectory_finished==1) {  // if the last call to fix_nve concluded a sucessful trajectory from 0 to i+1 
       Tattempt_counter++;
       
       if ((success_index==0 || crossed_interface==0) && unique_trajectories > 0) {
-        cout<<"\n----------------------------------------------------\n----------------------------------------------------\n"<<endl; 
+        //cout<<"\n----------------------------------------------------\n----------------------------------------------------\n"<<endl;
+        fprintf(pFile,"\n----------------------------------------------------\n----------------------------------------------------\n");
         // cout<<" --- recording from cell: "<<picked_m<<endl;
         // for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   { X_0[i][k] = temp_X_0[i][k]; V_0[i][k] = temp_V_0[i][k]; }
          if (old_success_index == 1) ensemble_trajectories++;
          else if (old_success_index == 2) {ensemble_trajectories++; success_counter++;}
          TIS_prob = (double)success_counter/(double)ensemble_trajectories;
-         cout<<endl<<" ADDED OLD TRAJECTORY AGAIN"<<endl;
+         /*cout<<endl<<" ADDED OLD TRAJECTORY AGAIN"<<endl;
          cout<<" Probability = "<<TIS_prob<<endl;
          cout<<" number of TPE trajectories = "<<ensemble_trajectories<<endl;
          cout<<" successful trajectories "<<success_counter<<endl;
          cout<<" number of unique trajectories = "<<unique_trajectories<<endl;
-         cout<<" number of attempts = "<<Tattempt_counter<<endl;
+         cout<<" number of attempts = "<<Tattempt_counter<<endl;*/
          success_rate = (double)unique_trajectories/(double)Tattempt_counter;
-         cout<<" success rate = "<<success_rate<<endl<<endl;
+        // cout<<" success rate = "<<success_rate<<endl<<endl;
+     
+        fprintf(pFile,"\n ADDED OLD TRAJECTORY AGAIN \n");
+        fprintf(pFile," Probability = %f \n",TIS_prob);
+        fprintf(pFile," number of TPE trajectories = %d \n", ensemble_trajectories);
+        fprintf(pFile, " successful trajectories %d \n",success_counter);
+        fprintf(pFile," number of unique trajectories = %d \n", unique_trajectories);
+        fprintf(pFile," number of attempts = %d \n", Tattempt_counter);
+        fprintf(pFile," success rate = %f \n", success_rate);
          
         //std::uniform_int_distribution<int> distribution(0,count_hist)
         int pick_seed = rand()%1000000+1;
         ranseed_pointer = &pick_seed;
         int rand_pick = i4_uniform_ab ( 0, count_hist_0, ranseed_pointer );
-        cout<<"rand pick = "<<rand_pick<<endl;
+        //cout<<"rand pick = "<<rand_pick<<endl;
+        fprintf(pFile,"rand pick = %d \n", rand_pick);
         
         for(int i=0;i<nlocal;i++) { 
            for(int k=0;k<3;k++) {
@@ -280,12 +307,9 @@ void FixNVE::initial_integrate(int vflag)
 
       //if last trajectory was in TPE then record some things
       if (crossed_interface==1 && success_index>0) {   // successful through Step 5
-         /*double t_end = omp_get_wtime();
-         int_time = t_end-t_start;
-         cout<<"Time for 1st traj: "<<int_time<<endl;*/
          unique_trajectories++;
-         cout<<"\n----------------------------------------------------\n----------------------------------------------------\n"<<endl;  
-         
+         //cout<<"\n----------------------------------------------------\n----------------------------------------------------\n"<<endl;  
+         fprintf(pFile,"\n----------------------------------------------------\n----------------------------------------------------\n");
 /*         if (unique_trajectories!=1){
             free(x_hist_0);
             free(v_hist_0);
@@ -331,22 +355,32 @@ void FixNVE::initial_integrate(int vflag)
 
         ensemble_trajectories++;
         TIS_prob = (double)success_counter/(double)ensemble_trajectories;
-        cout<<" Probability = "<<TIS_prob<<endl;
+        /*cout<<" Probability = "<<TIS_prob<<endl;
         cout<<endl<<" number of TPE trajectories = "<<ensemble_trajectories<<endl; 
         cout<<" successful trajectories = "<<success_counter<<endl;
         cout<<" number of unique trajectories = "<<unique_trajectories<<endl;
-        cout<<" number of attempts = "<<Tattempt_counter<<endl;
+        cout<<" number of attempts = "<<Tattempt_counter<<endl;*/
         success_rate = (double)unique_trajectories/(double)Tattempt_counter;
-        cout<<" success rate = "<<success_rate<<endl;
-        cout<<" number of steps in last trajectory "<<time_L_old<<endl<<endl;
-        
+        /*cout<<" success rate = "<<success_rate<<endl;
+        cout<<" number of steps in last trajectory "<<time_L_old<<endl<<endl;*/
+         
+
+        fprintf(pFile," Probability = %f \n",TIS_prob);
+        fprintf(pFile," number of TPE trajectories = %d \n", ensemble_trajectories);
+        fprintf(pFile, " successful trajectories %d \n",success_counter);
+        fprintf(pFile," number of unique trajectories = %d \n", unique_trajectories);
+        fprintf(pFile," number of attempts = %d \n", Tattempt_counter);
+        fprintf(pFile," success rate = %f \n", success_rate); 
+        fprintf(pFile," number of steps in last trajectory %d \n \n",time_L_old);
+   
         //std::uniform_int_distribution<int> distribution(0,count_hist);
         int pick_seed = rand()%1000000+1;
         ranseed_pointer = &pick_seed;
         int rand_pick = i4_uniform_ab ( 0, count_hist, ranseed_pointer );
-        cout<<"count_hist = "<<count_hist<<endl;
-        cout<<"rand pick = "<<rand_pick<<endl;
-       
+       // cout<<"count_hist = "<<count_hist<<endl;
+       // cout<<"rand pick = "<<rand_pick<<endl;
+        fprintf(pFile, "count_hist = %d \n", count_hist);
+        fprintf(pFile, "rand pick = %d \n", rand_pick);      
         for(int i=0;i<nlocal;i++) {
            for(int k=0;k<3;k++) {
                X_0[i][k] = x_hist_0[i][k][rand_pick];
@@ -366,6 +400,7 @@ void FixNVE::initial_integrate(int vflag)
       trajectory_finished = 0;
       crossed_interface = 0;
       success_index = 0;
+      check_recrossing = 0;
 //pick_index = 0;
 
       // select cell from which to record starting configuration for the trajectory after this one
@@ -379,8 +414,8 @@ void FixNVE::initial_integrate(int vflag)
       // set maximum number of steps for this trajectory 
       double alpha = (double)rand()/(double)RAND_MAX;
       N_max = floor(static_cast<double>(time_L_old)/alpha);
-      cout<<"N_max = "<<N_max<<endl;
-
+      //cout<<"N_max = "<<N_max<<endl;
+      fprintf(pFile, "N_max = %d \n", N_max);
     /*  if (Tattempt_counter != 0){
          free(x_hist);
          free(v_hist);
@@ -406,8 +441,8 @@ void FixNVE::initial_integrate(int vflag)
          double t = temper->compute_scalar();
 
 
-      cout<<"temperature = "<<t<<endl;
-
+      //cout<<"temperature = "<<t<<endl;
+        fprintf(pFile,"temperature = %f \n", t);
 
 
     }    // ------- end of initialization of new trajectory
@@ -431,8 +466,7 @@ void FixNVE::initial_integrate(int vflag)
     
 
     // ------- everything in this if statement can be moved into the bottom of the trajectory finished loop
-    if (b_index==0 && f_index==0) {
-
+    if (b_index==0 && f_index==0 && check_recrossing==0) {
 
     // ----- TIS Step 2  ------ //
     //alter momentum
@@ -452,14 +486,16 @@ void FixNVE::initial_integrate(int vflag)
       if (g_step==0)   H = PE_0 + old_ke;
       
       rand_ensemble = (double)rand()/(double)RAND_MAX;
-      cout<<"rand_ensemble = "<<rand_ensemble<<endl;
+//      cout<<"rand_ensemble = "<<rand_ensemble<<endl;
+      fprintf(pFile, "rand_ensemble = %f \n",rand_ensemble);
 //      if((rand_ensemble<0.5 && unique_trajectories>0) || (Tattempt_counter>=0 && unique_trajectories==0)){
       if((rand_ensemble<0.5) || unique_trajectories==0){
         rescale=1;
       }else{
         rescale=0;
       }
-      cout<<"rescale = "<<rescale<<endl;
+      //cout<<"rescale = "<<rescale<<endl;
+       fprintf(pFile, "rescale = %d \n", rescale);
       //cout<<"st3_pass = "<<st3_pass<<endl;     
       // add momentum pertabation
       for(int i=0;i<nlocal;i++) {
@@ -498,8 +534,9 @@ void FixNVE::initial_integrate(int vflag)
 
       
     // ----- TIS Step 3  ------ //
-    // decide whether to accept perturbation 
-      prob = MIN(1.0,exp(-ke_added*38.6847));
+    // decide whether to accept perturbation
+       
+      prob = MIN(1.0,exp(-ke_added/(k_B*sim_temperature)));
       rand_U = (double)rand()/(double)RAND_MAX;
       
       //if NVE rescale energy and accept perturbation
@@ -510,13 +547,16 @@ void FixNVE::initial_integrate(int vflag)
       }
      
       double t = temper->compute_scalar();
-      cout<<"temperature = "<<t<<endl;
+     // cout<<"temperature = "<<t<<endl;
+      fprintf(pFile,"temperature = %f \n", t);
       
       /*for(int i=0;i<nlocal;i++) {
         for(int k=0;k<3;k++) {trial_v[i][k] = v[i][k];v[i][k] = V_0[i][k];}};*/
 
-      cout<<"Prob = "<<prob<<endl;
-      cout<<"dke = "<<ke_added<<endl;
+      //cout<<"Prob = "<<prob<<endl;
+      //cout<<"dke = "<<ke_added<<endl;
+       fprintf(pFile,"Prob = %f \n",prob);
+       fprintf(pFile,"dke = %f \n",ke_added);
       //if NVT decide whether to perform this trajectory
       if (rand_U<prob) { 
         rescale_check +=1;
@@ -528,12 +568,13 @@ void FixNVE::initial_integrate(int vflag)
       } 
       else { 
         trajectory_finished=1; 
-        cout<<" trajectory ended due to momentum perturbation in NVT "<<endl;
+        //cout<<" trajectory ended due to momentum perturbation in NVT "<<endl;
+        fprintf(pFile," trajectory ended due to momentum perturbation in NVT ");
       }
 
       step_bck = 0;
       step_fwd = 0;
-
+      rec_step = 0;
     }
     // end of steps 2 and 3
 
@@ -543,26 +584,15 @@ void FixNVE::initial_integrate(int vflag)
 
       //hold trajectory in place to ensure neighbor list can catch up to sudden movement
       if (step_bck<rsteps) {
-        #pragma omp parallel for
-        for(int i=0;i<nlocal;i++)
-          {
-           for(int k=0;k<3;k++) 
-               { x[i][k] = st3_x[i][k]; v[i][k] = -st3_v[i][k]; }
-          }
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)  { x[i][k] = st3_x[i][k]; v[i][k] = -st3_v[i][k]; }
       } else {
 
         //set velocity on first dynamics step
         if (step_bck==rsteps) {
-          #pragma omp parallel for
           for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   v[i][k] = -st3_v[i][k];
           //cout<<endl<<"backward starts - g_step:  "<<g_step<<endl;
         }
 
-
-        //double t_start = omp_get_wtime();
-        #pragma omp parallel sections
-        {
-       // #pragma omp parallel for private(temp)
         // periodicity in x
         for (int i=0;i<nlocal;i++) {
           temp=x[i][0]-orig_x[i][0];
@@ -571,15 +601,7 @@ void FixNVE::initial_integrate(int vflag)
           uw_x[i][0] = temp + orig_x[i][0];
         }
         // free in y
-        //#pragma omp parallel for
-        #pragma omp section
-        {
         for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
-        }
-        
-        #pragma omp section
-        { 
-        //#pragma omp parallel for private(temp)
         // periodicity in z
         for (int i=0;i<nlocal;i++) {
           temp=x[i][2]-orig_x[i][2];
@@ -587,18 +609,9 @@ void FixNVE::initial_integrate(int vflag)
           else if(-temp>BL[2]*0.8) { temp += BL[2]; }
           uw_x[i][2] = temp + orig_x[i][2];
         }
-        }
-        }
-        #pragma omp parallel for
         for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
-        //}
-        //double t_end = omp_get_wtime();
-        //int_time = int_time + (t_end-t_start);
-        //if (g_step == 3000)
-        //cout<<"The time is: "<<int_time<<endl;
-
+        
         if (rmass) {
-          #pragma omp parallel for private(dtfm)
           for (int i = 0; i < nlocal; i++) {
             if (mask[i] & groupbit) {
   	      dtfm = dtf / rmass[i];
@@ -611,7 +624,6 @@ void FixNVE::initial_integrate(int vflag)
             }
           }
         } else {
-          #pragma omp parallel for private(dtfm)
           for (int i = 0; i < nlocal; i++) {
             if (mask[i] & groupbit) {
 	      dtfm = dtf / mass[type[i]];
@@ -624,22 +636,14 @@ void FixNVE::initial_integrate(int vflag)
             }
           }
         }
-    
-        #pragma omp parallel for
         for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
 
-        //double t_start = omp_get_wtime();
         // measure distance between current configuration and cell centers
         for(int j=0;j<NN;j++) { 
           vor_dist[j]=0.0;
           for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { temp = uw_x[i][k] - center_x[3*i+k][j]; vor_dist[j] += temp*temp; }
           vor_dist[j]=sqrt(vor_dist[j]);
         }
-        
-        /*double t_end = omp_get_wtime();
-        int_time = int_time + (t_end-t_start);
-        if (g_step == 3000)
-        cout<<"Time is: "<<int_time<<endl;*/
 
         // determine which cell the current configuration is in
         vor_check = vor_dist[0];
@@ -658,24 +662,27 @@ for(int m=0;m<NN;m++)  {
         //if (fabs(vor_dist[0]-vor_check)<1.0e-10 && oldm==1)   {
         if ( (fabs(vor_dist[0]-vor_check)<1.0e-10 || fabs(vor_dist[1]-vor_check)<1.0e-10 || fabs(vor_dist[2]-vor_check)<1.0e-10 || fabs(vor_dist[3]-vor_check)<1.0e-10) && oldm==4 )   {
            b_index = 0; f_index = 1;
-           cout<<"backwards MD suceeded "<<g_step<<" "<<step_bck<<endl;
+           //cout<<"backwards MD suceeded "<<g_step<<" "<<step_bck<<endl;
+           fprintf(pFile,"backwards MD suceeded %d %d \n", g_step, step_bck);
         }
         else if (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 && oldm==lamda+1 && success_counter>0)   {  //assumed first trajectory will be a success
         //else if ( (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+3]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+4]-vor_check)<1.0e-10) && oldm==lamda+1 && success_counter>0 )   {
           trajectory_finished=1; 
-          cout<<"backwards MD failed, back to step 1 "<<g_step<<" "<<step_bck<<endl;
+          //cout<<"backwards MD failed, back to step 1 "<<g_step<<" "<<step_bck<<endl;
+          fprintf(pFile, "backwards MD failed, back to step 1 %d %d \n", g_step, step_bck);
         }
 
         // check if sim makes it into next to last cell (meaning it crossed the interface lam_i
-        if (crossed_interface==0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm==lamda+1)   { crossed_interface = 1; }
-        if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; }
+        if (crossed_interface==0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm==lamda+1)   { crossed_interface = 1; fprintf(pFile, "crossed_interface %d \n", crossed_interface);}
+        //cout<<"crossed_interface "<<crossed_interface<<endl; }
+        if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; fprintf(pFile, "crossed_interface %d \n", crossed_interface);}
+        //cout<<"crossed_interface "<<crossed_interface<<endl; }
 
         // record the number of the cell containing the current position
         for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
 
         if ((step_bck-rsteps)>=0 && (step_bck-rsteps)%10 == 0 && count_hist <N_hist){
            count_hist += 1;
-           #pragma omp parallel for 
            for(int i=0;i<nlocal;i++) {for(int k=0;k<3;k++)  {x_hist[i][k][count_hist]=x[i][k];v_hist[i][k][count_hist]=-v[i][k];} }}
         
         /* pick XV_0 for next TIS step */
@@ -692,7 +699,8 @@ for(int m=0;m<NN;m++)  {
       // check if sim has gone too many steps..if so then stop this trajectory 
       if (static_cast<double>(step_bck)-rsteps > N_max) { 
         trajectory_finished=1;
-        cout<<"backwards MD failed due to N_max, back to step 3 "<<step_bck-rsteps<<"  N_max="<<N_max<<endl;
+        //cout<<"backwards MD failed due to N_max, back to step 3 "<<step_bck-rsteps<<"  N_max="<<N_max<<endl;
+        fprintf(pFile, "backwards MD failed due to N_max, back to step 3 %d N_max %d \n", step_bck-rsteps, N_max);
       }
      
       step_bck++;
@@ -704,18 +712,14 @@ for(int m=0;m<NN;m++)  {
     // --- Step 5: forward MD
     if (f_index == 1) {
       if (step_fwd<rsteps) {
-        #pragma omp parallel for
         for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)  { x[i][k] = st3_x[i][k]; v[i][k] = st3_v[i][k]; }
       } else {
 
         if (step_fwd==rsteps) {
-          #pragma omp parallel for
           for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)  v[i][k] = st3_v[i][k];
           //cout<<endl<<"forward starts - g_step:  "<<g_step<<endl;
         }
-        #pragma omp parallel sections
-        {
-        //#pragma omp parallel for private(temp)
+
         // periodicity in x
         for (int i=0;i<nlocal;i++) {
           temp=x[i][0]-orig_x[i][0];
@@ -723,16 +727,8 @@ for(int m=0;m<NN;m++)  {
           else if(-temp>BL[0]*0.8) { temp += BL[0]; }
           uw_x[i][0] = temp + orig_x[i][0];
         }
-        #pragma omp section
-        {
-        //#pragma omp parallel for
         // free in y
         for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
-        }
-        
-        #pragma omp section
-        {
-        //#pragma omp parallel for private(temp)
         // periodicity in z
         for (int i=0;i<nlocal;i++) {
           temp=x[i][2]-orig_x[i][2];
@@ -740,13 +736,9 @@ for(int m=0;m<NN;m++)  {
           else if(-temp>BL[2]*0.8) { temp += BL[2]; }
           uw_x[i][2] = temp + orig_x[i][2];
         }
-        }
-        }
-        #pragma omp parallel for
         for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
 
         if (rmass) {
-          #pragma omp parallel for private(dtfm)
           for (int i = 0; i < nlocal; i++) {
             if (mask[i] & groupbit) {
               dtfm = dtf / rmass[i];
@@ -759,7 +751,6 @@ for(int m=0;m<NN;m++)  {
             }
           }
         } else {
-          #pragma omp parallel for private(dtfm)
           for (int i = 0; i < nlocal; i++) {
             if (mask[i] & groupbit) {
               dtfm = dtf / mass[type[i]];
@@ -772,7 +763,6 @@ for(int m=0;m<NN;m++)  {
             }
           }
         }
-        #pragma omp parallel for
         for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
      
 
@@ -799,19 +789,27 @@ for(int m=0;m<NN;m++)  {
         // dww added step6_index=1 in else if
         if (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 && oldm==lamda+1)   {
         //if ( (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+3]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+4]-vor_check)<1.0e-10) && oldm==lamda+1 )   {
-          trajectory_finished=1; 
-          success_index = 2; 
-          cout<<"forward MD made it to lam_i+1 "<<g_step<<" "<<step_fwd<<endl;
+         // trajectory_finished=1; 
+         // success_index = 2; 
+          check_recrossing = 1;
+          f_index = 0;
+          //cout<<"forward MD made it to lam_i+1 "<<g_step<<" "<<step_fwd<<endl;
+          //cout<<"check_crossing "<<check_recrossing<<endl;
+          fprintf(pFile,"forward MD made it to lam_i+1 %d %d \n",g_step, step_fwd);
+          fprintf(pFile,"check_crossing %d \n", check_recrossing);
         //} else if(fabs(vor_dist[0]-vor_check)<1.0e-10 && oldm==1)   {
         } else if( (fabs(vor_dist[0]-vor_check)<1.0e-10 || fabs(vor_dist[1]-vor_check)<1.0e-10 || fabs(vor_dist[2]-vor_check)<1.0e-10  || fabs(vor_dist[3]-vor_check)<1.0e-10) && oldm==4 )   {
           trajectory_finished=1;
           success_index = 1;
-          cout<<"forward MD made it to lam_0  "<<g_step<<" "<<step_fwd<<endl;
+          //cout<<"forward MD made it to lam_0  "<<g_step<<" "<<step_fwd<<endl;
+          fprintf(pFile, "forward MD made it to lam_0  %d %d \n", g_step, step_fwd);
         }
 
         // dww check if sim makes it into next to last cell (meaning it crossed the interface lam_i
-        if (crossed_interface==0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm==lamda+1)   { crossed_interface = 1; }
-        if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; }
+        if (crossed_interface==0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm==lamda+1)   { crossed_interface = 1; fprintf(pFile, "crossed_interface %d \n", crossed_interface);}
+        //cout<<"crossed_interface "<<crossed_interface<<endl; }
+        if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; fprintf(pFile, "crossed_interface %d \n", crossed_interface);}
+// cout<<"crossed_interface "<<crossed_interface<<endl; }
 
         // record the number of the cell containing the current position
         for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
@@ -829,25 +827,109 @@ for(int m=0;m<NN;m++)  {
       
       if ((step_fwd-rsteps)>=0 && (step_fwd-rsteps)%10 == 0 && count_hist <=2*N_hist){
            count_hist += 1;
-           #pragma omp parallel for
            for(int i=0;i<nlocal;i++) {for(int k=0;k<3;k++)  {x_hist[i][k][count_hist]=x[i][k];v_hist[i][k][count_hist]=v[i][k];} }}
       //added the pick_index (dw)
       if (static_cast<double>(step_bck+step_fwd-2*rsteps) > N_max) {
         trajectory_finished=1; 
-        cout<<"forward MD failed due to N_max, back to step 1 "<<step_bck+step_fwd-2*rsteps<<" N_max="<<N_max<<endl;
+        //cout<<"forward MD failed due to N_max, back to step 1 "<<step_bck+step_fwd-2*rsteps<<" N_max="<<N_max<<endl;
+        fprintf(pFile, "forward MD failed due to N_max, back to step 1 %d N_max= %d \n", step_bck+step_fwd-2*rsteps, N_max);
       }
 
       step_fwd++;
 
     }
     // end of fwd MD
+    
+    if (check_recrossing == 1 && crossed_interface==0){ trajectory_finished=1; success_index = 2;} 
+    else if (check_recrossing == 1 && crossed_interface==1){
+       
+       // periodicity in x
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][0]-orig_x[i][0];
+          if (temp>BL[0]*0.8)  { temp -= BL[0]; }
+          else if(-temp>BL[0]*0.8) { temp += BL[0]; }
+          uw_x[i][0] = temp + orig_x[i][0];
+        }
+        // free in y
+        for (int i=0;i<nlocal;i++)   uw_x[i][1] = x[i][1];
+        // periodicity in z
+        for (int i=0;i<nlocal;i++) {
+          temp=x[i][2]-orig_x[i][2];
+          if (temp>BL[2]*0.8)  { temp -= BL[2]; }
+          else if(-temp>BL[2]*0.8) { temp += BL[2]; }
+          uw_x[i][2] = temp + orig_x[i][2];
+        }
+        for(int i=0;i<nlocal;i++)   for(int k=0;k<3;k++)   old_x[i][k] = uw_x[i][k];
+
+        if (rmass) {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+              dtfm = dtf / rmass[i];
+              v[i][0] += dtfm * f[i][0];
+              v[i][1] += dtfm * f[i][1];
+              v[i][2] += dtfm * f[i][2];
+              uw_x[i][0] += dtv * v[i][0];
+              uw_x[i][1] += dtv * v[i][1];
+              uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        } else {
+          for (int i = 0; i < nlocal; i++) {
+            if (mask[i] & groupbit) {
+              dtfm = dtf / mass[type[i]];
+              v[i][0] += dtfm * f[i][0];
+              v[i][1] += dtfm * f[i][1];
+              v[i][2] += dtfm * f[i][2];
+              uw_x[i][0] += dtv * v[i][0];
+              uw_x[i][1] += dtv * v[i][1];
+              uw_x[i][2] += dtv * v[i][2];
+            }
+          }
+        }
+        for(int i=0;i<nlocal;i++) for(int k=0;k<3;k++)  x[i][k] += (uw_x[i][k]-old_x[i][k]);
 
 
-        double t_end = omp_get_wtime();
-        int_time = int_time + (t_end-t_start);
-        if (g_step %  1000 == 0)
-        cout<<"Time is: "<<t_end-t_start<<endl;
-  //  }
+        //measure distance to cell centers from current configuration 
+        for(int j=0;j<NN;j++) {
+          vor_dist[j]=0.0;
+          for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { temp = uw_x[i][k] - center_x[3*i+k][j]; vor_dist[j] += temp*temp; }
+          vor_dist[j]=sqrt(vor_dist[j]);
+        }
+
+        //determine which cell the configuration is in
+        vor_check = vor_dist[0];
+        for(int m=0;m<NN;m++)   vor_check = MIN(vor_check,vor_dist[m]);
+
+
+        // dww added step6_index=1 in else if
+        if (fabs(vor_dist[lamda+3]-vor_check)<1.0e-10 && oldm==lamda+2)   {
+        //if ( (fabs(vor_dist[lamda+2]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+3]-vor_check)<1.0e-10 || fabs(vor_dist[lamda+4]-vor_check)<1.0e-10) && oldm==lamda+1 )   {
+          trajectory_finished=1; 
+          success_index = 2; 
+          //cout<<"forward MD made it to lam_i+2 "<<g_step<<" "<<rec_step<<endl;
+          fprintf(pFile,"forward MD made it to lam_i+2 %d %d \n", g_step, rec_step);
+        //} else if(fabs(vor_dist[0]-vor_check)<1.0e-10 && oldm==1)   {
+        }
+        else if ( ( fabs(vor_dist[0]-vor_check)<1.0e-10 || fabs(vor_dist[1]-vor_check)<1.0e-10 || fabs(vor_dist[2]-vor_check)<1.0e-10 
+                 || fabs(vor_dist[3]-vor_check)<1.0e-10) && oldm==4){
+          trajectory_finished=1;
+          success_index = 1;
+          //cout<<"forward MD back to lam_0 "<<g_step<<" "<<rec_step<<endl;
+          fprintf(pFile,"forward MD back to lam_0 %d %d \n", g_step, rec_step);
+        }
+       /* else if ((vor_dist[lamda+3]-vor_check)<1.0e-10 && rec_step == rec_max) {
+          trajectory_finished=1;  
+          success_index = 2;  
+          cout<<"forward MD remained close to lam_i+1 "<<g_step<<" "<<rec_step<<endl;
+        }*/
+
+        // record the number of the cell containing the current position
+        for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
+        
+        rec_step +=1;       
+	if (rec_step ==  rec_max && trajectory_finished==0) { trajectory_finished=1; success_index = 0;}
+   }
+   fclose(pFile);
 } //------ final end
 
 /* ---------------------------------------------------------------------- */
