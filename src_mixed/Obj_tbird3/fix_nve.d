@@ -141,5 +141,4 @@ fix_nve.o: fix_nve.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h
