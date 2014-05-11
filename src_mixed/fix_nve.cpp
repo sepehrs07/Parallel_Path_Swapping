@@ -910,8 +910,8 @@ for(int m=0;m<NN;m++)  {
     }
     // end of fwd MD
         
-   // if (check_recrossing == 1 && crossed_interface==0){ trajectory_finished=1; success_index = 2;} 
-    if (check_recrossing == 1)
+    if (check_recrossing == 1 && crossed_interface==0){ trajectory_finished=1; success_index = 2;} 
+    else if (check_recrossing == 1 && crossed_interface==1)
     {
        // periodicity in x
         for (int i=0;i<nlocal;i++) {
