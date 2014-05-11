@@ -105,7 +105,7 @@ void FixNVE::init()
 // static double   Al_mass = 26.982; //made same as potential file (dw)
  static double   H, PE_0, velo_magn, ke_added, cum_E;
  static int      tao_b, tao_f, step_bck, step_fwd, oldm, picked_m,N_max, rec_step;
- static int      success_index, crossed_previous, crossed_interface, previous_success, check_recrossing;
+ static int      success_index, old_crossed_previous,crossed_previous, crossed_interface, previous_success, check_recrossing;
  static int      old_success_index = 0;
  static int      send_success_index = 0;
  static int      recv_success_index = 0;
@@ -186,7 +186,7 @@ void FixNVE::initial_integrate(int vflag)
   
 
   char  buf[64];
-  sprintf(buf,"TIS_multi.%d",me);
+  sprintf(buf,"TIS_overhead.%d",me);
   FILE * pFile;
   pFile = fopen (buf,"a+");  
   rewind (pFile);
@@ -291,6 +291,7 @@ void FixNVE::initial_integrate(int vflag)
                X_0[i][k] = x_hist_0[i][k][rand_pick];
                V_0[i][k] = v_hist_0[i][k][rand_pick];
           }}
+        //first_traj =0;
       }  
       old_unique_trajectories = unique_trajectories;
       //if last trajectory was in TPE then record some things
@@ -352,17 +353,21 @@ void FixNVE::initial_integrate(int vflag)
           }}
 
         count_hist_0 = count_hist;
+        old_crossed_previous = crossed_previous;
+
+        if(swap_complete == 0) first_traj = 1;
       }//else if(previous_success==1)  { success_counter++; }
-     
+      
+      fprintf(pFile,"first_traj is %d \n",first_traj);
 
-      if(unique_trajectories>old_unique_trajectories){
+      /*if(unique_trajectories>old_unique_trajectories){
       first_traj = 1;
-      fprintf(pFile,"first_traj is %d \n",first_traj);}
-      else{
+      fprintf(pFile,"first_traj is %d \n",first_traj);}*/
+      /*else{
       first_traj = 0;
-      fprintf(pFile,"first_traj is %d \n",first_traj);}
+      fprintf(pFile,"first_traj is %d \n",first_traj);}*/
 
-      if (me%2 == 0){
+      /*if (me%2 == 0){
          gather_1st_traj[me] = first_traj;
          MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 1,
              universe->uworld, MPI_STATUS_IGNORE);
@@ -377,14 +382,15 @@ void FixNVE::initial_integrate(int vflag)
          MPI_Ssend(&first_traj, 1, MPI_INT, me-1, 1,
              universe->uworld);
          MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 2,
-             universe->uworld, MPI_STATUS_IGNORE);}
+             universe->uworld, MPI_STATUS_IGNORE);}*/
      
 
  
       fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
 
       if(swap_complete == 0 && sum_1st_traj == 2){
-      if(me%2==0){
+      fprintf(pFile,"waiting to swap \n");
+      /*if(me%2==0){
       //double rand_swap = (double)rand()/(double)RAND_MAX;
       double rand_swap = 0.1;
       fprintf(pFile,"rand_swap is %f \n", rand_swap);
@@ -397,12 +403,12 @@ void FixNVE::initial_integrate(int vflag)
       MPI_Recv(&flag_swap, 1, MPI_INT, me-1, 3,
              universe->uworld, MPI_STATUS_IGNORE);
       fprintf(pFile,"flag_swap is %d \n",flag_swap);
-      }
-      
+      }*/
+      flag_swap =1;
 
       if (flag_swap == 1){
          if(me%2 ==0){
-          if (success_index == 2){
+          if (old_success_index == 2){
           swap_acceptance_even = 1;}
           
           MPI_Ssend(&swap_acceptance_even, 1, MPI_INT, me+1, 4,
@@ -412,7 +418,7 @@ void FixNVE::initial_integrate(int vflag)
           }
          else if (me%2 !=0){
          //old_success_index >0
-         if(crossed_previous == 1){ 
+         if(old_crossed_previous == 1){ 
          swap_acceptance_odd = 1;
          send_success_index = 2;}
          
@@ -466,13 +472,17 @@ void FixNVE::initial_integrate(int vflag)
         success_index = recv_success_index;
         crossed_interface = 1;
         swap_complete =1;
+        first_traj = 0;
+        sum_1st_traj = 0;
         fprintf(pFile,"\n swap completed \n");
 
         goto traj_count;
       }
      else if(swap_acceptance==0){
+        first_traj = 0;
         swap_complete =1;
         crossed_interface =0;
+        sum_1st_traj = 0;
         fprintf(pFile,"\n swap rejected \n"); 
         fprintf(pFile,"swap complete = %d \n", swap_complete);
         goto traj_count; 
@@ -528,8 +538,6 @@ void FixNVE::initial_integrate(int vflag)
 
 
     }    // ------- end of initialization of new trajectory
-
-
 
 
     // ------- everything in this if statement can be moved into the bottom of the trajectory finished loop
@@ -635,6 +643,24 @@ void FixNVE::initial_integrate(int vflag)
     }
     // end of steps 2 and 3
 
+    if(sum_1st_traj != 2){
+    if (me%2 == 0){
+         gather_1st_traj[me] = first_traj;
+         MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 1,
+             universe->uworld, MPI_STATUS_IGNORE);
+         sum_1st_traj=0;
+         for (int i = me;i<=me+1 ;i++){
+              sum_1st_traj+=gather_1st_traj[i];}
+              //fprintf(pFile,"gather_1st_traj[%d] = %d \n",i,gather_1st_traj[i]);}
+        // fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
+         MPI_Send(&sum_1st_traj, 1, MPI_INT, me+1, 2,
+             universe->uworld);}
+      else if(me%2 !=0){
+         MPI_Send(&first_traj, 1, MPI_INT, me-1, 1,
+             universe->uworld);
+         MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 2,
+             universe->uworld, MPI_STATUS_IGNORE);}
+      }
 
     // --- Step 4: backward MD
     if (b_index == 1) {
