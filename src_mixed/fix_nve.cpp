@@ -105,7 +105,7 @@ void FixNVE::init()
 // static double   Al_mass = 26.982; //made same as potential file (dw)
  static double   H, PE_0, velo_magn, ke_added, cum_E;
  static int      tao_b, tao_f, step_bck, step_fwd, oldm, picked_m,N_max, rec_step;
- static int      success_index, crossed_interface, previous_success, check_recrossing;
+ static int      success_index, crossed_previous, crossed_interface, previous_success, check_recrossing;
  static int      old_success_index = 0;
  static int      send_success_index = 0;
  static int      recv_success_index = 0;
@@ -114,6 +114,7 @@ void FixNVE::init()
  static int      ensemble_trajectories = 0;
  const int      N_hist = 300;
  static int      count_hist = -1;
+ static int      count_hist_recv = -1;
  static int     count_hist_0;
  static double   x_hist_0[14000][3][2*N_hist+2],x_hist[14000][3][2*N_hist+2],v_hist_0[14000][3][2*N_hist+2],v_hist[14000][3][2*N_hist+2];
 /* double***       x_hist_0;
@@ -185,7 +186,7 @@ void FixNVE::initial_integrate(int vflag)
   
 
   char  buf[64];
-  sprintf(buf,"TIS_path_test_again.%d",me);
+  sprintf(buf,"TIS_multi.%d",me);
   FILE * pFile;
   pFile = fopen (buf,"a+");  
   rewind (pFile);
@@ -207,10 +208,6 @@ void FixNVE::initial_integrate(int vflag)
       BL[1] = yhi-ylo;
       BL[2] = zhi-zlo;
 
-      /* read interface position */
-      /*ifstream inld("ld_run.in");
-      inld>>lamda;
-      inld.close();*/
       lamda = me + 3;
       
       char seed_buf[128];
@@ -221,27 +218,11 @@ void FixNVE::initial_integrate(int vflag)
       fprintf(pFile,"seed is %d \n",ranseed);
       srand(ranseed);
 
-      /*char buf1[128];
-      sprintf(buf1,"cp ld%d.in ld_run.in",lamda+1);
-      system (buf1);*/
 
       NN = lamda+4;
       cell_start = lamda+1;
 
-      /* read PE at beginning and Interface*/
-      char buf0[128];
-      sprintf(buf0,"PE.log");
-      ifstream indata0 (buf0);
-      for(int i=0;i<cell_start;i++)  indata0>>PE_0;
-      indata0.close();
-
-      /*char  buf[64];
-      sprintf(buf,"fuck.%d",me);
-      FILE * pFile;
-      
-      pFile = fopen (buf,"w"); */
       fprintf(pFile,"\n from interface %d to %d \n \n", lamda+1, lamda+2);
-      //fclose (pFile);
       //cout<<"from interface #"<<lamda<<"  to #"<<lamda+1<<endl;
 
       // read starting configuration 
@@ -290,14 +271,7 @@ void FixNVE::initial_integrate(int vflag)
          if (old_success_index == 1) ensemble_trajectories++;
          else if (old_success_index == 2) {ensemble_trajectories++; success_counter++;}
          TIS_prob = (double)success_counter/(double)ensemble_trajectories;
-         //cout<<endl<<" ADDED OLD TRAJECTORY AGAIN"<<endl;
-         //cout<<" Probability = "<<TIS_prob<<endl;
-         //cout<<" number of TPE trajectories = "<<ensemble_trajectories<<endl;
-         //cout<<" successful trajectories "<<success_counter<<endl;
-         //cout<<" number of unique trajectories = "<<unique_trajectories<<endl;
-         //cout<<" number of attempts = "<<Tattempt_counter<<endl;
          success_rate = (double)unique_trajectories/(double)Tattempt_counter;
-        // cout<<" success rate = "<<success_rate<<endl<<endl;
      
         fprintf(pFile,"\n ADDED OLD TRAJECTORY AGAIN \n");
         fprintf(pFile," Probability = %f \n",TIS_prob);
@@ -307,11 +281,9 @@ void FixNVE::initial_integrate(int vflag)
         fprintf(pFile," number of attempts = %d \n", Tattempt_counter);
         fprintf(pFile," success rate = %f \n", success_rate);
          
-        //std::uniform_int_distribution<int> distribution(0,count_hist)
         int pick_seed = rand()%1000000+1;
         ranseed_pointer = &pick_seed;
         int rand_pick = i4_uniform_ab ( 0, count_hist_0, ranseed_pointer );
-        //cout<<"rand pick = "<<rand_pick<<endl;
         fprintf(pFile,"rand pick = %d \n", rand_pick);
         
         for(int i=0;i<nlocal;i++) { 
@@ -323,7 +295,12 @@ void FixNVE::initial_integrate(int vflag)
       old_unique_trajectories = unique_trajectories;
       //if last trajectory was in TPE then record some things
       if (crossed_interface==1 && success_index>0) {   // successful through Step 5
-         unique_trajectories++;
+      
+      
+        if(swap_acceptance == 1){ 
+          count_hist = count_hist_recv;
+         }
+        unique_trajectories++;
          //cout<<"\n----------------------------------------------------\n----------------------------------------------------\n"<<endl;  
          fprintf(pFile,"\n----------------------------------------------------\n----------------------------------------------------\n");
 
@@ -351,14 +328,7 @@ void FixNVE::initial_integrate(int vflag)
 
         ensemble_trajectories++;
         TIS_prob = (double)success_counter/(double)ensemble_trajectories;
-        /*cout<<" Probability = "<<TIS_prob<<endl;
-        cout<<endl<<" number of TPE trajectories = "<<ensemble_trajectories<<endl; 
-        cout<<" successful trajectories = "<<success_counter<<endl;
-        cout<<" number of unique trajectories = "<<unique_trajectories<<endl;
-        cout<<" number of attempts = "<<Tattempt_counter<<endl;*/
         success_rate = (double)unique_trajectories/(double)Tattempt_counter;
-        /*cout<<" success rate = "<<success_rate<<endl;
-        cout<<" number of steps in last trajectory "<<time_L_old<<endl<<endl;*/
          
 
         fprintf(pFile," Probability = %f \n",TIS_prob);
@@ -373,8 +343,6 @@ void FixNVE::initial_integrate(int vflag)
         int pick_seed = rand()%1000000+1;
         ranseed_pointer = &pick_seed;
         int rand_pick = i4_uniform_ab ( 0, count_hist, ranseed_pointer );
-       // cout<<"count_hist = "<<count_hist<<endl;
-       // cout<<"rand pick = "<<rand_pick<<endl;
         fprintf(pFile, "count_hist = %d \n", count_hist);
         fprintf(pFile, "rand pick = %d \n", rand_pick);      
         for(int i=0;i<nlocal;i++) {
@@ -384,14 +352,9 @@ void FixNVE::initial_integrate(int vflag)
           }}
 
         count_hist_0 = count_hist;
-       // swap_complete = 0;
-        //sum_1st_traj = 0;
-        //first_traj = 0;
       }//else if(previous_success==1)  { success_counter++; }
      
 
-      //MPI_Barrier(universe->uworld); 
-     // if(first_traj !=1){
       if(unique_trajectories>old_unique_trajectories){
       first_traj = 1;
       fprintf(pFile,"first_traj is %d \n",first_traj);}
@@ -399,20 +362,18 @@ void FixNVE::initial_integrate(int vflag)
       first_traj = 0;
       fprintf(pFile,"first_traj is %d \n",first_traj);}
 
-      if (me == 0){
+      if (me%2 == 0){
          gather_1st_traj[me] = first_traj;
          MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 1,
              universe->uworld, MPI_STATUS_IGNORE);
          sum_1st_traj=0;
-         for (int i = 0;i<nproc ;i++){
+         for (int i = me;i<=me+1 ;i++){
               sum_1st_traj+=gather_1st_traj[i];
               fprintf(pFile,"gather_1st_traj[%d] = %d \n",i,gather_1st_traj[i]);}
          fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
-         //MPI_Bcast(&sum_1st_traj, 1, MPI_INT, 0,
-           //    universe->uworld);}
          MPI_Ssend(&sum_1st_traj, 1, MPI_INT, me+1, 2,
              universe->uworld);}
-      else if(me ==1){
+      else if(me%2 !=0){
          MPI_Ssend(&first_traj, 1, MPI_INT, me-1, 1,
              universe->uworld);
          MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 2,
@@ -422,7 +383,7 @@ void FixNVE::initial_integrate(int vflag)
  
       fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
 
-      if(swap_complete == 0 && sum_1st_traj == nproc){
+      if(swap_complete == 0 && sum_1st_traj == 2){
       if(me%2==0){
       //double rand_swap = (double)rand()/(double)RAND_MAX;
       double rand_swap = 0.1;
@@ -451,11 +412,10 @@ void FixNVE::initial_integrate(int vflag)
           }
          else if (me%2 !=0){
          //old_success_index >0
-         
+         if(crossed_previous == 1){ 
          swap_acceptance_odd = 1;
-         send_success_index = 2;
-         //MPI_Ssend(&swap_acceptance_odd, 1, MPI_INT, me-1, 5,
-           //  universe->uworld);
+         send_success_index = 2;}
+         
          MPI_Recv(&swap_acceptance_even, 1, MPI_INT, me-1, 4,
              universe->uworld, MPI_STATUS_IGNORE); 
          MPI_Ssend(&swap_acceptance_odd, 1, MPI_INT, me-1, 5,
@@ -464,42 +424,57 @@ void FixNVE::initial_integrate(int vflag)
          fprintf(pFile,"swap acceptance even is %d \n",swap_acceptance_even);
          fprintf(pFile,"swap acceptance odd is %d \n",swap_acceptance_odd);
          fprintf(pFile,"swap acceptance is %d \n",swap_acceptance); 
-
-      if(swap_acceptance==1){
+      
+     if(swap_acceptance==1){
         if(me%2==0){
           MPI_Ssend(&send_success_index, 1, MPI_INT, me+1, 6,
              universe->uworld);
           MPI_Recv(&recv_success_index, 1, MPI_INT, me+1, 7,
              universe->uworld, MPI_STATUS_IGNORE);
+          MPI_Ssend(&count_hist_0, 1, MPI_INT, me+1, 8,
+             universe->uworld);
+          MPI_Recv(&count_hist_recv, 1, MPI_INT, me+1,9,
+             universe->uworld, MPI_STATUS_IGNORE);
+          MPI_Ssend(&x_hist_0[0][0][0],14000*3*602,MPI_DOUBLE,me+1,10,
+              universe->uworld);
+          MPI_Recv(&x_hist[0][0][0],14000*3*602, MPI_DOUBLE,me+1,11,
+             universe->uworld, MPI_STATUS_IGNORE); 
+          MPI_Ssend(&v_hist_0[0][0][0],14000*3*602,MPI_DOUBLE,me+1,12,
+              universe->uworld);
+          MPI_Recv(&v_hist[0][0][0],14000*3*602, MPI_DOUBLE,me+1,13,
+             universe->uworld, MPI_STATUS_IGNORE);
         }
         else if(me%2 != 0){
-          //MPI_Ssend(&send_success_index, 1, MPI_INT, me-1, 7,
-            // universe->uworld);
           MPI_Recv(&recv_success_index, 1, MPI_INT, me-1, 6,
              universe->uworld, MPI_STATUS_IGNORE);
           MPI_Ssend(&send_success_index, 1, MPI_INT, me-1, 7,
              universe->uworld);
+          MPI_Recv(&count_hist_recv, 1, MPI_INT, me-1,8,
+             universe->uworld, MPI_STATUS_IGNORE);
+          MPI_Ssend(&count_hist_0, 1, MPI_INT, me-1, 9,
+             universe->uworld);
+          MPI_Recv(&x_hist[0][0][0],14000*3*602, MPI_DOUBLE,me-1,10,
+             universe->uworld, MPI_STATUS_IGNORE); 
+          MPI_Ssend(&x_hist_0[0][0][0],14000*3*602,MPI_DOUBLE,me-1,11,
+              universe->uworld);
+          MPI_Recv(&v_hist[0][0][0],14000*3*602, MPI_DOUBLE,me-1,12,
+             universe->uworld, MPI_STATUS_IGNORE);
+          MPI_Ssend(&v_hist_0[0][0][0],14000*3*602,MPI_DOUBLE,me-1,13,
+              universe->uworld);
+          
         }	
         success_index = recv_success_index;
         crossed_interface = 1;
         swap_complete =1;
         fprintf(pFile,"\n swap completed \n");
-        count_hist = count_hist_0;
-
-        /*for(int i=0;i<nlocal;i++) {
-           for(int k=0;k<3;k++) {
-              for(int j = 0; j<=count_hist;j++){
-                 x_hist[i][k][j]=x_hist_0[i][k][j];v_hist[i][k][j]=v_hist_0[i][k][j];
-        }
-            }
-              }*/
-
 
         goto traj_count;
       }
      else if(swap_acceptance==0){
         swap_complete =1;
-        fprintf(pFile,"\n swap completed \n");
+        crossed_interface =0;
+        fprintf(pFile,"\n swap rejected \n"); 
+        fprintf(pFile,"swap complete = %d \n", swap_complete);
         goto traj_count; 
       }
       }
@@ -519,6 +494,7 @@ void FixNVE::initial_integrate(int vflag)
       f_index = 0;
       trajectory_finished = 0;
       crossed_interface = 0;
+      crossed_previous = 0;
       success_index = 0;
       //send_success_index = 0;
       //recv_success_index = 0;
@@ -750,6 +726,10 @@ void FixNVE::initial_integrate(int vflag)
         //cout<<"crossed_interface "<<crossed_interface<<endl; }
         if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; fprintf(pFile, "crossed_interface %d \n", crossed_interface);}
         //cout<<"crossed_interface "<<crossed_interface<<endl; }
+        if(me%2 != 0){
+        if(crossed_previous == 0 && fabs(vor_dist[lamda-1]-vor_check)<1.0e-10 && oldm ==lamda) {crossed_previous = 1; fprintf(pFile,"crossed_previous \n");}
+        if(crossed_previous == 0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm ==lamda-1) {crossed_previous = 1; fprintf(pFile,"crossed_previous \n");}
+        }
 
         // record the number of the cell containing the current position
         for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
@@ -876,7 +856,13 @@ for(int m=0;m<NN;m++)  {
         //cout<<"crossed_interface "<<crossed_interface<<endl; }
         if (crossed_interface==0 && fabs(vor_dist[lamda+1]-vor_check)<1.0e-10 && oldm==lamda)   { crossed_interface = 1; fprintf(pFile, "crossed_interface %d \n", crossed_interface);}
 // cout<<"crossed_interface "<<crossed_interface<<endl; }
+   
+        if(me%2 != 0){
+        if(crossed_previous == 0 && fabs(vor_dist[lamda-1]-vor_check)<1.0e-10 && oldm ==lamda) {crossed_previous = 1; fprintf(pFile,"crossed_previous \n");}
+        if(crossed_previous == 0 && fabs(vor_dist[lamda]-vor_check)<1.0e-10 && oldm ==lamda-1) {crossed_previous = 1; fprintf(pFile,"crossed_previous \n");}
+        }
 
+        
         // record the number of the cell containing the current position
         for(int m=0;m<NN;m++)   if(fabs(vor_dist[m]-vor_check)<1.0e-10)   oldm=m;
 
