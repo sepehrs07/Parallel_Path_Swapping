@@ -183,7 +183,7 @@ void FixNVE::initial_integrate(int vflag)
   MPI_Comm_rank(universe->uworld, &me);
   int nproc;
   MPI_Comm_size(universe->uworld, &nproc); 
-  
+  MPI_Request send_req[nproc],recv_req[nproc], recv_2nd_req[nproc] ;
 
   char  buf[64];
   sprintf(buf,"TIS_overhead.%d",me);
@@ -355,7 +355,17 @@ void FixNVE::initial_integrate(int vflag)
         count_hist_0 = count_hist;
         old_crossed_previous = crossed_previous;
 
-        if(swap_complete == 0) first_traj = 1;
+        if(swap_complete == 0){
+           first_traj = 1;
+           if(me%2 == 0){
+           gather_1st_traj[me] = first_traj;}
+           else if(me%2 != 0){
+           //MPI_Isend(&first_traj, 1, MPI_INT, me-1, 14,
+            // universe->uworld,&send_req[me]);
+           //MPI_Wait(&send_req[me],&status);
+           MPI_Send(&first_traj, 1, MPI_INT, me-1, 14,
+              universe->uworld);}
+        }           
       }//else if(previous_success==1)  { success_counter++; }
       
       fprintf(pFile,"first_traj is %d \n",first_traj);
@@ -385,7 +395,6 @@ void FixNVE::initial_integrate(int vflag)
              universe->uworld, MPI_STATUS_IGNORE);}*/
      
 
- 
       fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
 
       if(swap_complete == 0 && sum_1st_traj == 2){
@@ -474,6 +483,7 @@ void FixNVE::initial_integrate(int vflag)
         swap_complete =1;
         first_traj = 0;
         sum_1st_traj = 0;
+        gather_1st_traj[me] = 0;
         fprintf(pFile,"\n swap completed \n");
 
         goto traj_count;
@@ -483,6 +493,7 @@ void FixNVE::initial_integrate(int vflag)
         swap_complete =1;
         crossed_interface =0;
         sum_1st_traj = 0;
+        gather_1st_traj[me] = 0;
         fprintf(pFile,"\n swap rejected \n"); 
         fprintf(pFile,"swap complete = %d \n", swap_complete);
         goto traj_count; 
@@ -558,7 +569,6 @@ void FixNVE::initial_integrate(int vflag)
       velo_magn = temp / static_cast<double>(3*nlocal);
       
       rand_ensemble = (double)rand()/(double)RAND_MAX;
-      double rand_swap = (double)rand()/(double)RAND_MAX;
 //      cout<<"rand_ensemble = "<<rand_ensemble<<endl;
       fprintf(pFile, "rand_ensemble = %f \n",rand_ensemble);
 //      if((rand_ensemble<0.5 && unique_trajectories>0) || (Tattempt_counter>=0 && unique_trajectories==0)){
@@ -643,9 +653,34 @@ void FixNVE::initial_integrate(int vflag)
     }
     // end of steps 2 and 3
 
+
     if(sum_1st_traj != 2){
-    if (me%2 == 0){
-         gather_1st_traj[me] = first_traj;
+      if (me%2 == 0){
+         int flag_even;
+         MPI_Iprobe(me+1, 14, universe->uworld, &flag_even, 
+               &status);
+         if(flag_even){
+         MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 14,
+             universe->uworld,MPI_STATUS_IGNORE);}
+         sum_1st_traj=0;
+         for (int i = me;i<=me+1 ;i++){
+              sum_1st_traj+=gather_1st_traj[i];}
+         if(sum_1st_traj == 2){
+         MPI_Send(&sum_1st_traj, 1, MPI_INT, me+1, 15,
+             universe->uworld);}
+        // MPI_Wait(&send_request[me],&status);}
+      }
+      else if (me%2 != 0){
+         int flag_odd;
+         MPI_Iprobe(me-1, 15, universe->uworld, &flag_odd, 
+               &status);
+         if(flag_odd){
+         MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 15,
+             universe->uworld,MPI_STATUS_IGNORE);}} 
+     }
+    /*if(sum_1st_traj != 2){
+    if (me%2 == 0 && flag_even ==0){
+       //  gather_1st_traj[me] = first_traj;
          MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 1,
              universe->uworld, MPI_STATUS_IGNORE);
          sum_1st_traj=0;
@@ -654,13 +689,15 @@ void FixNVE::initial_integrate(int vflag)
               //fprintf(pFile,"gather_1st_traj[%d] = %d \n",i,gather_1st_traj[i]);}
         // fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
          MPI_Send(&sum_1st_traj, 1, MPI_INT, me+1, 2,
-             universe->uworld);}
-      else if(me%2 !=0){
+             universe->uworld);
+         flag_even =1;}
+      else if(me%2 !=0 && flag_odd==0){
          MPI_Send(&first_traj, 1, MPI_INT, me-1, 1,
              universe->uworld);
          MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 2,
-             universe->uworld, MPI_STATUS_IGNORE);}
-      }
+             universe->uworld, MPI_STATUS_IGNORE);
+         flag_odd =1;}
+      }*/
 
     // --- Step 4: backward MD
     if (b_index == 1) {
@@ -911,7 +948,7 @@ for(int m=0;m<NN;m++)  {
     // end of fwd MD
         
     if (check_recrossing == 1 && crossed_interface==0){ trajectory_finished=1; success_index = 2;} 
-    else if (check_recrossing == 1 && crossed_interface==1)
+    if (check_recrossing == 1 && crossed_interface==1)
     {
        // periodicity in x
         for (int i=0;i<nlocal;i++) {
