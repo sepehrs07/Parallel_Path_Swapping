@@ -150,6 +150,15 @@ void FixNVE::init()
  static int    first_swap_try = 0;
  static int    gather_1st_traj[60];
  static int    sum_1st_traj;
+  static double total_time = 0;
+ static double initial_time = 0;
+ static double current_time = 0;
+ static double final_com_time = 0;
+ static double initial_com_time = 0;
+ static double total_com_time = 0;
+ static double even_wait = 0;
+ static double odd_wait = 0;
+
 /* ----------------------------------------------------------------------
    allow for both per-type and per-atom mass
 ------------------------------------------------------------------------- */
@@ -194,7 +203,9 @@ void FixNVE::initial_integrate(int vflag)
 
   /* Initialization for first call to fix_nve */
     if(g_step==0) {
-      
+ 
+      initial_time = MPI_Wtime();
+        
       /* read if constraint is on/off and box sizes */
       ifstream vector("pos.read");
       vector>>xlo>>xhi;
@@ -354,6 +365,7 @@ void FixNVE::initial_integrate(int vflag)
 
         count_hist_0 = count_hist;
         old_crossed_previous = crossed_previous;
+        
 
         if(swap_complete == 0) first_traj = 1;
       }//else if(previous_success==1)  { success_counter++; }
@@ -385,7 +397,7 @@ void FixNVE::initial_integrate(int vflag)
              universe->uworld, MPI_STATUS_IGNORE);}*/
      
 
- 
+       
       fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
 
       if(swap_complete == 0 && sum_1st_traj == 2){
@@ -405,7 +417,7 @@ void FixNVE::initial_integrate(int vflag)
       fprintf(pFile,"flag_swap is %d \n",flag_swap);
       }*/
       flag_swap =1;
-
+      initial_com_time = MPI_Wtime();
       if (flag_swap == 1){
          if(me%2 ==0){
           if (old_success_index == 2){
@@ -476,6 +488,13 @@ void FixNVE::initial_integrate(int vflag)
         sum_1st_traj = 0;
         fprintf(pFile,"\n swap completed \n");
 
+        final_com_time = MPI_Wtime();
+        total_com_time = total_com_time + (final_com_time - initial_com_time);
+        fprintf(pFile,"\n Total communiation time is %f \n",total_com_time);
+        total_time = (final_com_time - initial_time);
+        fprintf(pFile,"\n Total elapsed time is %f \n",total_time);
+
+
         goto traj_count;
       }
      else if(swap_acceptance==0){
@@ -485,11 +504,22 @@ void FixNVE::initial_integrate(int vflag)
         sum_1st_traj = 0;
         fprintf(pFile,"\n swap rejected \n"); 
         fprintf(pFile,"swap complete = %d \n", swap_complete);
+
+        final_com_time = MPI_Wtime();
+        total_com_time = total_com_time + (final_com_time - initial_com_time);
+        fprintf(pFile,"\n Total communiation time is %f \n",total_com_time);
+        total_time = (final_com_time - initial_time);
+        fprintf(pFile,"\n Total elapsed time is %f \n",total_time);
+  
         goto traj_count; 
       }
       }
       }
  
+      
+      fprintf(pFile,"\n Total communiation time is %f \n",total_com_time);
+      total_time = (final_com_time - initial_time);
+      fprintf(pFile,"\n Total elapsed time is %f \n",total_time);
       swap_acceptance_odd = 0;
       swap_acceptance_even =0;     
       swap_acceptance = 0;
@@ -642,8 +672,9 @@ void FixNVE::initial_integrate(int vflag)
       rec_step = 0;
     }
     // end of steps 2 and 3
-
+    
     if(sum_1st_traj != 2){
+    initial_com_time = MPI_Wtime();
     if (me%2 == 0){
          gather_1st_traj[me] = first_traj;
          MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 1,
@@ -660,6 +691,8 @@ void FixNVE::initial_integrate(int vflag)
              universe->uworld);
          MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 2,
              universe->uworld, MPI_STATUS_IGNORE);}
+      final_com_time = MPI_Wtime();
+      total_com_time = total_com_time + (final_com_time - initial_com_time);
       }
 
     // --- Step 4: backward MD
