@@ -150,6 +150,14 @@ void FixNVE::init()
  static int    first_swap_try = 0;
  static int    gather_1st_traj[60];
  static int    sum_1st_traj;
+ static double total_time = 0;
+ static double initial_time = 0;
+ static double current_time = 0;
+ static double final_com_time = 0;
+ static double initial_com_time = 0;
+ static double total_com_time = 0;
+ static double even_wait = 0;
+ static double odd_wait = 0;
 /* ----------------------------------------------------------------------
    allow for both per-type and per-atom mass
 ------------------------------------------------------------------------- */
@@ -184,16 +192,18 @@ void FixNVE::initial_integrate(int vflag)
   int nproc;
   MPI_Comm_size(universe->uworld, &nproc); 
   
-
+  
   char  buf[64];
   sprintf(buf,"TIS_multi.%d",me);
   FILE * pFile;
   pFile = fopen (buf,"a+");  
   rewind (pFile);
-
+  
 
   /* Initialization for first call to fix_nve */
     if(g_step==0) {
+
+      initial_time = MPI_Wtime();
       
       /* read if constraint is on/off and box sizes */
       ifstream vector("pos.read");
@@ -362,10 +372,20 @@ void FixNVE::initial_integrate(int vflag)
       first_traj = 0;
       fprintf(pFile,"first_traj is %d \n",first_traj);}
 
+      initial_com_time = MPI_Wtime();
       if (me%2 == 0){
          gather_1st_traj[me] = first_traj;
+         current_time = MPI_Wtime();
+         fprintf(pFile,"\n I am waiting here....\n");
          MPI_Recv(&gather_1st_traj[me+1], 1, MPI_INT, me+1, 1,
              universe->uworld, MPI_STATUS_IGNORE);
+         double icr_even_wait = (MPI_Wtime() - current_time);
+         fprintf(pFile,"I was waiting %f \n",icr_even_wait);
+         even_wait = even_wait + icr_even_wait;              
+         fprintf(pFile,"Total  waiting for odd %f \n",even_wait);
+         current_time = MPI_Wtime();
+         total_time = (current_time - initial_time);
+         fprintf(pFile,"Total time is %f \n",total_time);
          sum_1st_traj=0;
          for (int i = me;i<=me+1 ;i++){
               sum_1st_traj+=gather_1st_traj[i];
@@ -374,17 +394,27 @@ void FixNVE::initial_integrate(int vflag)
          MPI_Ssend(&sum_1st_traj, 1, MPI_INT, me+1, 2,
              universe->uworld);}
       else if(me%2 !=0){
+         current_time = MPI_Wtime(); 
+         fprintf(pFile,"\n I am waiting here....\n");
          MPI_Ssend(&first_traj, 1, MPI_INT, me-1, 1,
              universe->uworld);
+         double icr_odd_wait = (MPI_Wtime() - current_time);
+         fprintf(pFile,"I was waiting %f \n",icr_odd_wait);
+         odd_wait = odd_wait + icr_odd_wait;
+         fprintf(pFile,"Total waiting for even %f \n",odd_wait);
+         current_time = MPI_Wtime();
+         total_time = (current_time - initial_time);
+         fprintf(pFile,"Total time is %f \n",total_time); 
          MPI_Recv(&sum_1st_traj, 1, MPI_INT, me-1, 2,
              universe->uworld, MPI_STATUS_IGNORE);}
-     
+      
+       
 
  
       fprintf(pFile,"sum_1st_traj is %d \n",sum_1st_traj);
 
       if(swap_complete == 0 && sum_1st_traj == 2){
-      if(me%2==0){
+    /*  if(me%2==0){
       //double rand_swap = (double)rand()/(double)RAND_MAX;
       double rand_swap = 0.1;
       fprintf(pFile,"rand_swap is %f \n", rand_swap);
@@ -397,8 +427,8 @@ void FixNVE::initial_integrate(int vflag)
       MPI_Recv(&flag_swap, 1, MPI_INT, me-1, 3,
              universe->uworld, MPI_STATUS_IGNORE);
       fprintf(pFile,"flag_swap is %d \n",flag_swap);
-      }
-      
+      }*/
+      flag_swap = 1;
 
       if (flag_swap == 1){
          if(me%2 ==0){
@@ -467,6 +497,12 @@ void FixNVE::initial_integrate(int vflag)
         crossed_interface = 1;
         swap_complete =1;
         fprintf(pFile,"\n swap completed \n");
+      
+        final_com_time = MPI_Wtime();
+        total_com_time = total_com_time + (final_com_time - initial_com_time);
+        fprintf(pFile,"\n Total communiation time is %f \n",total_com_time);
+        total_time = (final_com_time - initial_time);
+        fprintf(pFile,"\n Total elapsed time is %f \n",total_time);
 
         goto traj_count;
       }
@@ -475,11 +511,23 @@ void FixNVE::initial_integrate(int vflag)
         crossed_interface =0;
         fprintf(pFile,"\n swap rejected \n"); 
         fprintf(pFile,"swap complete = %d \n", swap_complete);
+
+       final_com_time = MPI_Wtime();
+       total_com_time = total_com_time + (final_com_time - initial_com_time);
+       fprintf(pFile,"\n Total communiation time is %f \n",total_com_time);
+       total_time = (final_com_time - initial_time);
+       fprintf(pFile,"\n Total elapsed time is %f \n",total_time);
+
         goto traj_count; 
       }
       }
       }
- 
+      final_com_time = MPI_Wtime();
+      total_com_time = total_com_time + (final_com_time - initial_com_time);
+      fprintf(pFile,"\n Total communiation time is %f \n",total_com_time);
+      total_time = (final_com_time - initial_time);
+      fprintf(pFile,"\n Total elapsed time is %f \n",total_time);
+
       swap_acceptance_odd = 0;
       swap_acceptance_even =0;     
       swap_acceptance = 0;
@@ -618,7 +666,7 @@ void FixNVE::initial_integrate(int vflag)
       if (rand_U<prob) { 
         rescale_check +=1;
         //record starting x and v for bkwd and fwd dynamics
-        for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { st3_x[i][k] = x[i][k]; st3_v[i][k] = v[i][k]; } 
+        for(int i=0;i<nlocal;i++)  for(int k=0;k<3;k++)   { st3_x[i][k] = x[i][k]; st3_v[i][k] = v[i][k]; }
         b_index = 1;
         crossed_interface=0;
         //st3_pass++;
@@ -884,8 +932,8 @@ for(int m=0;m<NN;m++)  {
     }
     // end of fwd MD
         
-   // if (check_recrossing == 1 && crossed_interface==0){ trajectory_finished=1; success_index = 2;} 
-    if (check_recrossing == 1)
+    if (check_recrossing == 1 && crossed_interface==0){ trajectory_finished=1; success_index = 2;} 
+    if (check_recrossing == 1 && crossed_interface==1)
     {
        // periodicity in x
         for (int i=0;i<nlocal;i++) {
@@ -975,7 +1023,8 @@ for(int m=0;m<NN;m++)  {
         rec_step +=1;       
 	if (rec_step ==  rec_max && trajectory_finished==0) { trajectory_finished=1; success_index = 2;}
    }
-   fclose(pFile);
+ //  fprintf(pFile,"Total time is %f \n",total_time); 
+   fclose(pFile); 
 } //------ final end
 
 /* ---------------------------------------------------------------------- */
